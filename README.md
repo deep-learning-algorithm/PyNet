@@ -1,6 +1,8 @@
 # PyNet
 深度学习框架（python numpy实现）
 
+[LeNet5实现-numpy](https://www.zhujian.tech/posts/c300ea0f.html#more)
+
 参考：
 
 [toxtli/lenet-5-mnist-from-scratch-numpy](https://github.com/toxtli/lenet-5-mnist-from-scratch-numpy)
