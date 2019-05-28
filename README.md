@@ -1,7 +1,16 @@
 # PyNet
-深度学习框架（python numpy实现）
+
+深度学习
+
+python numpy实现 + pytorch实现
+
+-------------
+
+相关文档
 
 [LeNet5实现-numpy](https://www.zhujian.tech/posts/c300ea0f.html#more)
+
+------------
 
 参考：
 
