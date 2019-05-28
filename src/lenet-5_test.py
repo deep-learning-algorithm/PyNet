@@ -4,10 +4,18 @@
 # @Author  : zj
 
 from nn.nets import *
+from nn.net_utils import *
 from src.load_mnist import *
 import numpy as np
 import matplotlib.pyplot as plt
 import time
+
+lr = 1e-3
+reg = 1e-3
+batch_size = 128
+epochs = 1000
+
+model_path = '../model/lenet5-epochs-250.pkl'
 
 
 def compute_accuracy(x_test, y_test, net, batch_size=128):
@@ -33,7 +41,7 @@ def draw(loss_list, title='损失图'):
     plt.show()
 
 
-def lenet5_test():
+def lenet5_train():
     x_train, x_test, y_train, y_test = load_mnist_data(shuffle=True)
 
     # 标准化
@@ -42,11 +50,6 @@ def lenet5_test():
 
     net = LeNet5()
     criterion = CrossEntropyLoss()
-
-    lr = 1e-3
-    reg = 1e-3
-    batch_size = 128
-    epochs = 10
 
     loss_list = []
     range_list = np.arange(0, x_train.shape[0] - batch_size, step=batch_size)
@@ -70,13 +73,38 @@ def lenet5_test():
         print('one epoch need time: %.3f' % (end - start))
         print('epoch: %d loss: %f' % (i + 1, total_loss / num))
         loss_list.append(total_loss / num)
+        # draw(loss_list)
+        if i % 50 == 49:
+            path = 'lenet5-epochs-%d.pkl' % (i + 1)
+            params = net.get_params()
+            save_params(params, path=path)
+            test_accuracy = compute_accuracy(x_test, y_test, net, batch_size=batch_size)
+            print('epochs: %d test_accuracy: %f' % (i + 1, test_accuracy))
+            print('loss: %s' % loss_list)
 
-    draw(loss_list)
-    print(compute_accuracy(x_test, y_test, net, batch_size=batch_size))
+
+def lenet5_test():
+    params = load_params(model_path)
+    print(params)
+
+    net = LeNet5()
+    net.set_params(params)
+
+    x_train, x_test, y_train, y_test = load_mnist_data(shuffle=True)
+
+    # 标准化
+    x_train = x_train / 255.0 - 0.5
+    x_test = x_test / 255.0 - 0.5
+
+    test_accuracy = compute_accuracy(x_test, y_test, net, batch_size=batch_size)
+    print(test_accuracy)
+    train_accuracy = compute_accuracy(x_train, y_train, net, batch_size=batch_size)
+    print(train_accuracy)
 
 
 if __name__ == '__main__':
-    start = time.time()
+    # start = time.time()
+    # lenet5_train()
+    # end = time.time()
+    # print('training need time: %.3f' % (end - start))
     lenet5_test()
-    end = time.time()
-    print('training need time: %.3f' % (end - start))
