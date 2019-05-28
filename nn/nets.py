@@ -109,7 +109,7 @@ class LeNet5(Net):
         x = self.maxPool2(x)
         x = self.relu3(self.conv3(x))
         # (N, C, 1, 1) -> (N, C)
-        x = x.squeeze()
+        x = x.reshape(x.shape[0], -1)
         x = self.relu4(self.fc1(x))
         x = self.fc2(x)
 
