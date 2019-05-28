@@ -6,9 +6,9 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
-# from matplotlib.font_manager import _rebuild
-#
-# _rebuild()  # reload一下
+from matplotlib.font_manager import _rebuild
+
+_rebuild()  # reload一下
 #
 # plt.rcParams['font.sans-serif'] = ['simhei']  # 用来正常显示中文标签
 # plt.rcParams['axes.unicode_minus'] = False  # 用来正常显示负号
@@ -76,6 +76,11 @@ loss_list = [2.302556029875231, 2.3023752576917773, 2.302213968770917, 2.3020690
              2.7083544100784577e-05, 2.709567526056006e-05, 2.7085715811490156e-05, 2.7065199226484803e-05,
              2.708214112245154e-05]
 
+train_list = [0.9607487118828779, 0.9773898366163535, 0.9832533760619825, 0.986196250930778, 0.9879120025299252,
+              0.9897054904051172, 0.9911325071920464, 0.9924984453583577, 0.9939865405117271, 0.994019856076759]
+test_list = [0.963310917721519, 0.9764636075949367, 0.982001582278481, 0.985067246835443, 0.9846716772151899,
+             0.9865506329113924, 0.9866495253164557, 0.9865506329113924, 0.9875395569620253, 0.9862539556962026]
+
 
 def draw(loss_list, title='LeNet-5 LOSS', xlabel='iterations / times', ylabel='loss value'):
     plt.title(title)
@@ -85,5 +90,15 @@ def draw(loss_list, title='LeNet-5 LOSS', xlabel='iterations / times', ylabel='l
     plt.show()
 
 
+def draw_v2():
+    plt.title('精度图')
+    plt.ylabel('精度')
+    plt.xlabel('迭代/50次')
+    plt.plot(train_list, label='训练集')
+    plt.plot(test_list, label='测试集')
+    plt.legend()
+    plt.show()
+
+
 if __name__ == '__main__':
-    draw(loss_list)
+    draw(loss_list, title='爱的发')
