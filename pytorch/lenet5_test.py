@@ -108,6 +108,8 @@ def classify_mnist():
     optimer = optim.SGD(net.parameters(), lr=learning_rate)
 
     loss_list = []
+    train_list = []
+    test_list = []
     for i in range(epoches):
         num = 0
         total_loss = 0
@@ -133,9 +135,17 @@ def classify_mnist():
         loss_list.append(total_loss / num)
         if (i % 50) == 49:
             draw(loss_list)
-            train_accuracy = compute_accuracy(test_loader, net, device)
+            train_accuracy = compute_accuracy(train_loader, net, device)
             test_accuracy = compute_accuracy(test_loader, net, device)
             print('train accuracy: %f test accuracy: %f' % (train_accuracy, test_accuracy))
+            train_list.append(train_accuracy)
+            test_list.append(test_accuracy)
+            print(loss_list)
+            print(train_list)
+            print(test_list)
+    draw(loss_list)
+    draw(train_list, title='训练精度', ylabel='精度', xlabel='迭代/50次')
+    draw(test_list, title='测试精度', ylabel='精度', xlabel='迭代/50次')
 
 
 if __name__ == '__main__':
