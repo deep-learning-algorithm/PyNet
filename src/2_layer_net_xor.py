@@ -8,6 +8,9 @@ from nn.net_utils import *
 from src.load_mnist import *
 import matplotlib.pyplot as plt
 
+"""
+XOR问题
+"""
 
 def compute_accuracy(scores, labels):
     predicted = np.argmax(scores, axis=1)

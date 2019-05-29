@@ -77,12 +77,59 @@ class TwoLayerNet(Net):
         self.fc2.set_params(params['fc2'])
 
 
+class ThreeLayerNet(Net):
+    """
+    实现3层神经网络
+    """
+
+    def __init__(self, num_in, num_h_one, num_h_two, num_out, momentum=0):
+        super(ThreeLayerNet, self).__init__()
+        self.fc1 = FC(num_in, num_h_one, momentum=momentum)
+        self.relu1 = ReLU()
+        self.fc2 = FC(num_h_one, num_h_two, momentum=momentum)
+        self.relu2 = ReLU()
+        self.fc3 = FC(num_h_two, num_out, momentum=momentum)
+
+    def __call__(self, inputs):
+        return self.forward(inputs)
+
+    def forward(self, inputs):
+        # inputs.shape = [N, D_in]
+        assert len(inputs.shape) == 2
+        a1 = self.relu1(self.fc1(inputs))
+        a2 = self.relu2(self.fc2(a1))
+        z3 = self.fc3(a2)
+
+        return z3
+
+    def backward(self, grad_out):
+        da2 = self.fc3.backward(grad_out)
+        dz2 = self.relu2.backward(da2)
+        da1 = self.fc2.backward(dz2)
+        dz1 = self.relu1.backward(da1)
+        da0 = self.fc1.backward(dz1)
+
+    def update(self, lr=1e-3, reg=1e-3):
+        self.fc3.update(learning_rate=lr, regularization_rate=reg)
+        self.fc2.update(learning_rate=lr, regularization_rate=reg)
+        self.fc1.update(learning_rate=lr, regularization_rate=reg)
+
+    def get_params(self):
+        return {'fc1': self.fc1.get_params(), 'fc2': self.fc2.get_params(), 'fc3': self.fc3.get_params()}
+
+    def set_params(self, params):
+        self.fc1.set_params(params['fc1'])
+        self.fc2.set_params(params['fc2'])
+        self.fc3.set_params(params['fc3'])
+
+
 class LeNet5(Net):
     """
     LeNet-5网络
     """
 
     def __init__(self):
+        super(LeNet5, self).__init__()
         self.conv1 = Conv2d(1, 5, 5, 6, stride=1, padding=0)
         self.conv2 = Conv2d(6, 5, 5, 16, stride=1, padding=0)
         self.conv3 = Conv2d(16, 5, 5, 120, stride=1, padding=0)
