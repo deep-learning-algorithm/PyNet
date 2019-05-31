@@ -31,7 +31,7 @@ class Conv2d(Layer):
     卷积层
     """
 
-    def __init__(self, in_c, filter_h, filter_w, filter_num, stride=1, padding=0):
+    def __init__(self, in_c, filter_h, filter_w, filter_num, stride=1, padding=0, momentum=0):
         super(Conv2d, self).__init__()
         self.in_c = in_c
         self.filter_h = filter_h
@@ -42,7 +42,9 @@ class Conv2d(Layer):
 
         self.W = \
             {'val': 0.01 * np.random.normal(loc=0, scale=1.0, size=(filter_h * filter_w * in_c, filter_num)),
-             'grad': 0}
+             'grad': 0,
+             'v': 0,
+             'momentum': momentum}
         self.b = {'val': 0.01 * np.random.normal(loc=0, scale=1.0, size=(1, filter_num)), 'grad': 0}
         self.a = None
         self.input_shape = None
@@ -77,9 +79,11 @@ class Conv2d(Layer):
         return row2im_indices(da, self.input_shape, field_height=self.filter_h,
                               field_width=self.filter_w, stride=self.stride, padding=self.padding)
 
-    def update(self, lr=1e-3, reg=1e-3):
-        self.W['val'] -= lr * (self.W['grad'] + reg * self.W['val'])
-        self.b['val'] -= lr * (self.b['grad'])
+    def update(self, learning_rate=0, regularization_rate=0):
+        self.W['v'] = self.W['momentum'] * self.W['v'] - learning_rate * (
+                    self.W['grad'] + regularization_rate * self.W['val'])
+        self.W['val'] += self.W['v']
+        self.b['val'] -= learning_rate * (self.b['grad'])
 
     def get_params(self):
         return {'W': self.W['val'], 'b': self.b['val']}
@@ -139,16 +143,20 @@ class FC(Layer):
     全连接层
     """
 
-    def __init__(self, num_in, num_out):
+    def __init__(self, num_in, num_out, momentum=0):
         """
         :param num_in: 前一层神经元个数
         :param num_out: 当前层神经元个数
+        :param momentum: 动量因子
         """
         super(FC, self).__init__()
         assert isinstance(num_in, int) and num_in > 0
         assert isinstance(num_out, int) and num_out > 0
 
-        self.W = {'val': 0.01 * np.random.normal(loc=0, scale=1.0, size=(num_in, num_out)), 'grad': 0}
+        self.W = {'val': 0.01 * np.random.normal(loc=0, scale=1.0, size=(num_in, num_out)),
+                  'grad': 0,
+                  'v': 0,
+                  'momentum': momentum}
         self.b = {'val': 0.01 * np.random.normal(loc=0, scale=1.0, size=(1, num_out)), 'grad': 0}
         self.inputs = None
 
@@ -170,9 +178,11 @@ class FC(Layer):
         grad_in = grad_out.dot(self.W['val'].T)
         return grad_in
 
-    def update(self, lr=1e-3, reg=1e-3):
-        self.W['val'] -= lr * (self.W['grad'] + reg * self.W['val'])
-        self.b['val'] -= lr * self.b['grad']
+    def update(self, learning_rate=0, regularization_rate=0):
+        self.W['v'] = self.W['momentum'] * self.W['v'] - learning_rate * (
+                self.W['grad'] + regularization_rate * self.W['val'])
+        self.W['val'] += self.W['v']
+        self.b['val'] -= learning_rate * self.b['grad']
 
     def get_params(self):
         return {'W': self.W['val'], 'b': self.b['val']}
@@ -218,6 +228,7 @@ class CrossEntropyLoss(object):
         # labels.shape == [N]
         assert len(scores.shape) == 2
         assert len(labels.shape) == 1
+        scores -= np.max(scores, axis=1, keepdims=True)
         expscores = np.exp(scores)
         self.probs = expscores / np.sum(expscores, axis=1, keepdims=True)
         self.labels = labels.copy()
@@ -234,6 +245,9 @@ class CrossEntropyLoss(object):
 
         grad_out[range(N), self.labels] -= 1
         return grad_out
+
+    def get_probs(self):
+        return self.probs
 
 
 class Softmax(object):
