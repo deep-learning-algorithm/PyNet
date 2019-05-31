@@ -31,7 +31,7 @@ class Conv2d(Layer):
     卷积层
     """
 
-    def __init__(self, in_c, filter_h, filter_w, filter_num, stride=1, padding=0, momentum=0):
+    def __init__(self, in_c, filter_h, filter_w, filter_num, stride=1, padding=0, momentum=0, nesterov=False):
         super(Conv2d, self).__init__()
         self.in_c = in_c
         self.filter_h = filter_h
@@ -39,6 +39,7 @@ class Conv2d(Layer):
         self.filter_num = filter_num
         self.stride = stride
         self.padding = padding
+        self.nesterov = nesterov
 
         self.W = \
             {'val': 0.01 * np.random.normal(loc=0, scale=1.0, size=(filter_h * filter_w * in_c, filter_num)),
@@ -80,9 +81,13 @@ class Conv2d(Layer):
                               field_width=self.filter_w, stride=self.stride, padding=self.padding)
 
     def update(self, learning_rate=0, regularization_rate=0):
+        v_prev = self.W['v']
         self.W['v'] = self.W['momentum'] * self.W['v'] - learning_rate * (
-                    self.W['grad'] + regularization_rate * self.W['val'])
-        self.W['val'] += self.W['v']
+                self.W['grad'] + regularization_rate * self.W['val'])
+        if self.nesterov:
+            self.W['val'] += (1 + self.W['momentum']) * self.W['v'] - self.W['momentum'] * v_prev
+        else:
+            self.W['val'] += self.W['v']
         self.b['val'] -= learning_rate * (self.b['grad'])
 
     def get_params(self):
@@ -143,16 +148,18 @@ class FC(Layer):
     全连接层
     """
 
-    def __init__(self, num_in, num_out, momentum=0):
+    def __init__(self, num_in, num_out, momentum=0, nesterov=False):
         """
         :param num_in: 前一层神经元个数
         :param num_out: 当前层神经元个数
         :param momentum: 动量因子
+        :param nesterov: 是否使用Nesterov加速梯度
         """
         super(FC, self).__init__()
         assert isinstance(num_in, int) and num_in > 0
         assert isinstance(num_out, int) and num_out > 0
 
+        self.nesterov = nesterov
         self.W = {'val': 0.01 * np.random.normal(loc=0, scale=1.0, size=(num_in, num_out)),
                   'grad': 0,
                   'v': 0,
@@ -179,9 +186,13 @@ class FC(Layer):
         return grad_in
 
     def update(self, learning_rate=0, regularization_rate=0):
+        v_prev = self.W['v']
         self.W['v'] = self.W['momentum'] * self.W['v'] - learning_rate * (
                 self.W['grad'] + regularization_rate * self.W['val'])
-        self.W['val'] += self.W['v']
+        if self.nesterov:
+            self.W['val'] += (1 + self.W['momentum']) * self.W['v'] - self.W['momentum'] * v_prev
+        else:
+            self.W['val'] += self.W['v']
         self.b['val'] -= learning_rate * self.b['grad']
 
     def get_params(self):
