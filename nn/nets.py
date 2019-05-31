@@ -128,16 +128,16 @@ class LeNet5(Net):
     LeNet-5网络
     """
 
-    def __init__(self):
+    def __init__(self, momentum=0):
         super(LeNet5, self).__init__()
-        self.conv1 = Conv2d(1, 5, 5, 6, stride=1, padding=0)
-        self.conv2 = Conv2d(6, 5, 5, 16, stride=1, padding=0)
-        self.conv3 = Conv2d(16, 5, 5, 120, stride=1, padding=0)
+        self.conv1 = Conv2d(1, 5, 5, 6, stride=1, padding=0, momentum=momentum)
+        self.conv2 = Conv2d(6, 5, 5, 16, stride=1, padding=0, momentum=momentum)
+        self.conv3 = Conv2d(16, 5, 5, 120, stride=1, padding=0, momentum=momentum)
 
         self.maxPool1 = MaxPool(2, 2, 6, stride=2)
         self.maxPool2 = MaxPool(2, 2, 16, stride=2)
-        self.fc1 = FC(120, 84)
-        self.fc2 = FC(84, 10)
+        self.fc1 = FC(120, 84, momentum=momentum)
+        self.fc2 = FC(84, 10, momentum=momentum)
 
         self.relu1 = ReLU()
         self.relu2 = ReLU()
@@ -185,11 +185,11 @@ class LeNet5(Net):
         self.conv1.backward(dz1)
 
     def update(self, lr=1e-3, reg=1e-3):
-        self.fc2.update(lr, reg)
-        self.fc1.update(lr, reg)
-        self.conv3.update(lr, reg)
-        self.conv2.update(lr, reg)
-        self.conv1.update(lr, reg)
+        self.fc2.update(learning_rate=lr, regularization_rate=reg)
+        self.fc1.update(learning_rate=lr, regularization_rate=reg)
+        self.conv3.update(learning_rate=lr, regularization_rate=reg)
+        self.conv2.update(learning_rate=lr, regularization_rate=reg)
+        self.conv1.update(learning_rate=lr, regularization_rate=reg)
 
     def get_params(self):
         out = dict()
