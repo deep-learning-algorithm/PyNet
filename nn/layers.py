@@ -39,13 +39,13 @@ class Conv2d(Layer):
         self.filter_num = filter_num
         self.stride = stride
         self.padding = padding
-        self.nesterov = nesterov
 
         self.W = \
             {'val': 0.01 * np.random.normal(loc=0, scale=1.0, size=(filter_h * filter_w * in_c, filter_num)),
              'grad': 0,
              'v': 0,
-             'momentum': momentum}
+             'momentum': momentum,
+             'nesterov': nesterov}
         self.b = {'val': 0.01 * np.random.normal(loc=0, scale=1.0, size=(1, filter_num)), 'grad': 0}
         self.a = None
         self.input_shape = None
@@ -84,18 +84,21 @@ class Conv2d(Layer):
         v_prev = self.W['v']
         self.W['v'] = self.W['momentum'] * self.W['v'] - learning_rate * (
                 self.W['grad'] + regularization_rate * self.W['val'])
-        if self.nesterov:
+        if self.W['nesterov']:
             self.W['val'] += (1 + self.W['momentum']) * self.W['v'] - self.W['momentum'] * v_prev
         else:
             self.W['val'] += self.W['v']
         self.b['val'] -= learning_rate * (self.b['grad'])
 
     def get_params(self):
-        return {'W': self.W['val'], 'b': self.b['val']}
+        return {'W': self.W['val'], 'momentum': self.W['momentum'], 'nesterov': self.W['nesterov'], 'b': self.b['val']}
 
     def set_params(self, params):
-        self.W['val'] = params['W']
-        self.b['val'] = params['b']
+        self.W['val'] = params.get('W')
+        self.b['val'] = params.get('b')
+
+        self.W['momentum'] = params.get('momentum', 0.0)
+        self.W['nesterov'] = params.get('nesterov', False)
 
 
 class MaxPool(Layer):
@@ -159,11 +162,11 @@ class FC(Layer):
         assert isinstance(num_in, int) and num_in > 0
         assert isinstance(num_out, int) and num_out > 0
 
-        self.nesterov = nesterov
         self.W = {'val': 0.01 * np.random.normal(loc=0, scale=1.0, size=(num_in, num_out)),
                   'grad': 0,
                   'v': 0,
-                  'momentum': momentum}
+                  'momentum': momentum,
+                  'nesterov': nesterov}
         self.b = {'val': 0.01 * np.random.normal(loc=0, scale=1.0, size=(1, num_out)), 'grad': 0}
         self.inputs = None
 
@@ -189,18 +192,21 @@ class FC(Layer):
         v_prev = self.W['v']
         self.W['v'] = self.W['momentum'] * self.W['v'] - learning_rate * (
                 self.W['grad'] + regularization_rate * self.W['val'])
-        if self.nesterov:
+        if self.W['nesterov']:
             self.W['val'] += (1 + self.W['momentum']) * self.W['v'] - self.W['momentum'] * v_prev
         else:
             self.W['val'] += self.W['v']
         self.b['val'] -= learning_rate * self.b['grad']
 
     def get_params(self):
-        return {'W': self.W['val'], 'b': self.b['val']}
+        return {'W': self.W['val'], 'momentum': self.W['momentum'], 'nesterov': self.W['nesterov'], 'b': self.b['val']}
 
     def set_params(self, params):
-        self.W['val'] = params['W']
-        self.b['val'] = params['b']
+        self.W['val'] = params.get('W')
+        self.b['val'] = params.get('b')
+
+        self.W['momentum'] = params.get('momentum', 0.0)
+        self.W['nesterov'] = params.get('nesterov', False)
 
 
 class ReLU(Layer):
