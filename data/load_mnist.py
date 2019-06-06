@@ -9,7 +9,8 @@ import cv2
 
 img_path = '../data/mnist/test/0/0.png'
 
-data_path = '../data/mnist/'
+# data_path = '/home/zj/data/mnist/'
+data_path = '/home/lab305/Documents/zj/data/mnist/'
 
 cate_list = list(range(10))
 
