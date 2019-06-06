@@ -82,13 +82,14 @@ class ThreeLayerNet(Net):
     实现3层神经网络
     """
 
-    def __init__(self, num_in, num_h_one, num_h_two, num_out, momentum=0):
+    def __init__(self, num_in, num_h_one, num_h_two, num_out, momentum=0, p_h=1.0):
         super(ThreeLayerNet, self).__init__()
         self.fc1 = FC(num_in, num_h_one, momentum=momentum)
         self.relu1 = ReLU()
         self.fc2 = FC(num_h_one, num_h_two, momentum=momentum)
         self.relu2 = ReLU()
         self.fc3 = FC(num_h_two, num_out, momentum=momentum)
+        self.p_h = p_h
 
     def __call__(self, inputs):
         return self.forward(inputs)
@@ -97,7 +98,13 @@ class ThreeLayerNet(Net):
         # inputs.shape = [N, D_in]
         assert len(inputs.shape) == 2
         a1 = self.relu1(self.fc1(inputs))
+        U1 = np.random.ranf(a1.shape) < self.p_h
+        a1 *= U1
+
         a2 = self.relu2(self.fc2(a1))
+        U2 = np.random.ranf(a2.shape) < self.p_h
+        a2 *= U2
+
         z3 = self.fc3(a2)
 
         return z3
@@ -114,13 +121,28 @@ class ThreeLayerNet(Net):
         self.fc2.update(learning_rate=lr, regularization_rate=reg)
         self.fc1.update(learning_rate=lr, regularization_rate=reg)
 
+    def predict(self, inputs):
+        # inputs.shape = [N, D_in]
+        assert len(inputs.shape) == 2
+        a1 = self.relu1(self.fc1(inputs))
+        a1 *= self.p_h
+
+        a2 = self.relu2(self.fc2(a1))
+        a2 *= self.p_h
+
+        z3 = self.fc3(a2)
+
+        return z3
+
     def get_params(self):
-        return {'fc1': self.fc1.get_params(), 'fc2': self.fc2.get_params(), 'fc3': self.fc3.get_params()}
+        return {'fc1': self.fc1.get_params(), 'fc2': self.fc2.get_params(), 'fc3': self.fc3.get_params(),
+                'p_h': self.p_h}
 
     def set_params(self, params):
         self.fc1.set_params(params['fc1'])
         self.fc2.set_params(params['fc2'])
         self.fc3.set_params(params['fc3'])
+        self.p_h = params['p_h']
 
 
 class LeNet5(Net):
