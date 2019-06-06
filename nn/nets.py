@@ -82,13 +82,13 @@ class ThreeLayerNet(Net):
     实现3层神经网络
     """
 
-    def __init__(self, num_in, num_h_one, num_h_two, num_out, momentum=0, p_h=1.0):
+    def __init__(self, num_in, num_h_one, num_h_two, num_out, momentum=0, nesterov=False, p_h=1.0, ):
         super(ThreeLayerNet, self).__init__()
-        self.fc1 = FC(num_in, num_h_one, momentum=momentum)
+        self.fc1 = FC(num_in, num_h_one, momentum=momentum, nesterov=nesterov)
         self.relu1 = ReLU()
-        self.fc2 = FC(num_h_one, num_h_two, momentum=momentum)
+        self.fc2 = FC(num_h_one, num_h_two, momentum=momentum, nesterov=nesterov)
         self.relu2 = ReLU()
-        self.fc3 = FC(num_h_two, num_out, momentum=momentum)
+        self.fc3 = FC(num_h_two, num_out, momentum=momentum, nesterov=nesterov)
         self.p_h = p_h
 
     def __call__(self, inputs):
