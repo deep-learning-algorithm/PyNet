@@ -2,20 +2,17 @@
 
 深度学习
 
-python numpy实现 + pytorch实现
+python numpy实现
 
--------------
+当前实现内容：
 
-相关文档
+1. 神经网络
+2. 卷积神经网络
+3. 动量加速和Nesterov加速
+4. 随机失活
 
-[LeNet5实现-numpy](https://www.zhujian.tech/posts/c300ea0f.html#more)
+数据集操作：
 
-------------
-
-参考：
-
-[toxtli/lenet-5-mnist-from-scratch-numpy](https://github.com/toxtli/lenet-5-mnist-from-scratch-numpy)
-
-[卷积神经网络推导-批量图片矩阵计算](https://www.zhujian.tech/posts/ab1e719c.html#more)
-
-[im2col解析1](https://www.zhujian.tech/posts/cc37c46b.html#more)
+1. mnist
+2. cifar-10
+3. orl
