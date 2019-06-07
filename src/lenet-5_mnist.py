@@ -5,17 +5,15 @@
 
 from nn.nets import *
 from nn.net_utils import *
-from src.load_mnist import *
+from data.load_mnist import *
 import numpy as np
 import matplotlib.pyplot as plt
 import time
 
-lr = 1e-3
-reg = 1e-3
-batch_size = 128
-epochs = 1000
-
 model_path = '../model/lenet5-epochs-250.pkl'
+
+batch_size = 128
+momentum = 0.9
 
 
 def compute_accuracy(x_test, y_test, net, batch_size=128):
@@ -48,10 +46,19 @@ def lenet5_train():
     x_train = x_train / 255.0 - 0.5
     x_test = x_test / 255.0 - 0.5
 
-    net = LeNet5()
+    net = LeNet5(momentum=momentum)
     criterion = CrossEntropyLoss()
 
+    learning_rate = 1e-3
+    reg = 1e-3
+    epochs = 1000
+
     loss_list = []
+    train_list = []
+    test_list = []
+    best_train_accuracy = 0.995
+    best_test_accuracy = 0.995
+
     range_list = np.arange(0, x_train.shape[0] - batch_size, step=batch_size)
     for i in range(epochs):
         total_loss = 0
@@ -68,19 +75,46 @@ def lenet5_train():
 
             grad_out = criterion.backward()
             net.backward(grad_out)
-            net.update(lr=lr, reg=reg)
+            net.update(lr=learning_rate, reg=reg)
         end = time.time()
         print('one epoch need time: %.3f' % (end - start))
         print('epoch: %d loss: %f' % (i + 1, total_loss / num))
         loss_list.append(total_loss / num)
-        # draw(loss_list)
-        if i % 50 == 49:
-            path = 'lenet5-epochs-%d.pkl' % (i + 1)
-            params = net.get_params()
-            save_params(params, path=path)
+
+        if (i % 50) == 50:
+            # # 每隔50次降低学习率
+            # learning_rate *= 0.5
+
+            train_accuracy = compute_accuracy(x_train, y_train, net, batch_size=batch_size)
             test_accuracy = compute_accuracy(x_test, y_test, net, batch_size=batch_size)
-            print('epochs: %d test_accuracy: %f' % (i + 1, test_accuracy))
-            print('loss: %s' % loss_list)
+            train_list.append(train_accuracy)
+            test_list.append(test_accuracy)
+
+            print(loss_list)
+            print(train_list)
+            print(test_list)
+            if train_accuracy > best_train_accuracy and test_accuracy > best_test_accuracy:
+                best_train_accuracy = train_accuracy
+                best_test_accuracy = test_accuracy
+
+                path = 'lenet5-epochs-%d.pkl' % (i + 1)
+                save_params(net.get_params(), path=path)
+                break
+
+    plt.figure(1)
+    plt.title('损失图')
+    plt.ylabel('损失值')
+    plt.xlabel('迭代/50次')
+    plt.plot(loss_list)
+
+    plt.figure(2)
+    plt.title('精度图')
+    plt.ylabel('精度值')
+    plt.xlabel('迭代/50次')
+    plt.plot(train_list, label='训练集')
+    plt.plot(test_list, label='测试集')
+    plt.legend()
+    plt.show()
 
 
 def lenet5_test():
@@ -103,8 +137,8 @@ def lenet5_test():
 
 
 if __name__ == '__main__':
-    # start = time.time()
-    # lenet5_train()
-    # end = time.time()
-    # print('training need time: %.3f' % (end - start))
-    lenet5_test()
+    start = time.time()
+    lenet5_train()
+    end = time.time()
+    print('training need time: %.3f' % (end - start))
+    # lenet5_test()

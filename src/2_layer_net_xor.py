@@ -5,7 +5,7 @@
 
 from nn.nets import *
 from nn.net_utils import *
-from src.load_mnist import *
+from data.load_mnist import *
 import matplotlib.pyplot as plt
 
 """

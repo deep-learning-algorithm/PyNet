@@ -1,19 +1,18 @@
 # -*- coding: utf-8 -*-
 
-# @Time    : 19-6-6 上午9:47
+# @Time    : 19-6-7 下午12:23
 # @Author  : zj
 
-
-from data.load_orl import *
+from data.load_cifar_10 import *
 from nn.nets import *
 from nn.net_utils import *
 import matplotlib.pyplot as plt
 import time
 
 # 批量大小
-batch_size = 4
+batch_size = 256
 # 输入维数
-D = 644
+D = 3072
 # 隐藏层大小
 H1 = 2000
 H2 = 800
@@ -21,7 +20,7 @@ H2 = 800
 K = 40
 
 # 学习率
-lr = 2e-2
+lr = 1e-3
 # 正则化强度
 reg_rate = 1e-3
 
@@ -50,7 +49,7 @@ def draw(loss_list, title='损失图', ylabel='损失值', xlabel='迭代/100次
 
 
 if __name__ == '__main__':
-    x_train, x_test, y_train, y_test = load_orl_data(shuffle=True)
+    x_train, x_test, y_train, y_test = load_cifar_10_data(shuffle=True)
 
     x_train = x_train / 255 - 0.5
     x_test = x_test / 255 - 0.5
@@ -72,7 +71,9 @@ if __name__ == '__main__':
             labels = y_train[j:j + batch_size]
 
             scores = net.forward(data)
-            total_loss += criterion.forward(scores, labels)
+            loss = criterion.forward(scores, labels)
+            # print(loss)
+            total_loss += loss
             dout = criterion.backward()
             net.backward(dout)
             net.update(lr=lr, reg=reg_rate)
@@ -91,7 +92,7 @@ if __name__ == '__main__':
             test_accuracy = compute_accuracy(x_test, y_test, net, batch_size=batch_size)
             if best_test_accuracy < test_accuracy:
                 best_test_accuracy = test_accuracy
-                save_params(net.get_params(), path='three-dropout-nn-epochs-%d.pkl' % (i + 1))
+                save_params(net.get_params(), path='./three-nn-dropout-epochs-%d.pkl' % (i + 1))
 
         print('best train accuracy: %.2f %%   best test accuracy: %.2f %%' % (
             best_train_accuracy * 100, best_test_accuracy * 100))
@@ -101,5 +102,5 @@ if __name__ == '__main__':
         if i % 50 == 49:
             lr /= 2
 
-    draw(loss_list, title='mnist', xlabel='迭代/次')
-    draw(train_accuracy_list, title='训练', ylabel='检测精度', xlabel='迭代/次')
+    draw(loss_list, title='损失图', xlabel='迭代/次')
+    draw(train_accuracy_list, title='训练图', ylabel='检测精度', xlabel='迭代/次')
