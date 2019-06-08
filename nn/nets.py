@@ -145,9 +145,9 @@ class LeNet5(Net):
     LeNet-5网络
     """
 
-    def __init__(self, momentum=0, nesterov=False, p_h=1.0):
+    def __init__(self, in_channels, momentum=0, nesterov=False, p_h=1.0):
         super(LeNet5, self).__init__()
-        self.conv1 = Conv2d(1, 5, 5, 6, stride=1, padding=0, momentum=momentum, nesterov=nesterov)
+        self.conv1 = Conv2d(in_channels, 5, 5, 6, stride=1, padding=0, momentum=momentum, nesterov=nesterov)
         self.conv2 = Conv2d(6, 5, 5, 16, stride=1, padding=0, momentum=momentum, nesterov=nesterov)
         self.conv3 = Conv2d(16, 5, 5, 120, stride=1, padding=0, momentum=momentum, nesterov=nesterov)
 

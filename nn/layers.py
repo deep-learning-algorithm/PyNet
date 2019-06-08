@@ -118,20 +118,20 @@ class MaxPool(Layer):
         self.a_shape = None
         self.arg_z = None
 
-    def __call__(self, input):
-        return self.forward(input)
+    def __call__(self, inputs):
+        return self.forward(inputs)
 
-    def forward(self, input):
+    def forward(self, inputs):
         # input.shape == [N, C, H, W]
-        assert len(input.shape) == 4
-        N, C, H, W = input.shape[:4]
+        assert len(inputs.shape) == 4
+        N, C, H, W = inputs.shape[:4]
         out_h = int((H - self.filter_h) / self.stride + 1)
         out_w = int((W - self.filter_w) / self.stride + 1)
 
         a = pool2row_indices(input, self.filter_h, self.filter_w, stride=self.stride)
         z = np.max(a, axis=1)
         self.arg_z = np.argmax(a, axis=1)
-        self.input_shape = input.shape
+        self.input_shape = inputs.shape
         self.a_shape = a.shape
 
         return pool_fc2output(z, N, out_h, out_w)
