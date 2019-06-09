@@ -58,7 +58,7 @@ if __name__ == '__main__':
     x_train = x_train / 255 - 0.5
     x_test = x_test / 255 - 0.5
 
-    net = ThreeLayerNet(D, H1, H2, K, p_in=p_in)
+    net = ThreeLayerNet(D, H1, H2, K, p_h=p_h)
     criterion = CrossEntropyLoss()
 
     loss_list = []
