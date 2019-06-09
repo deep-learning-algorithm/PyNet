@@ -163,9 +163,6 @@ class LeNet5(Net):
 
         self.p_h = p_h
         self.U1 = None
-        self.U2 = None
-        self.U3 = None
-        self.U4 = None
 
     def __call__(self, inputs):
         return self.forward(inputs)
@@ -174,23 +171,15 @@ class LeNet5(Net):
         # inputs.shape = [N, C, H, W]
         assert len(inputs.shape) == 4
         x = self.relu1(self.conv1(inputs))
-        self.U1 = F.dropout2d(x.shape, self.p_h)
-        x *= self.U1
-
         x = self.maxPool1(x)
         x = self.relu2(self.conv2(x))
-        self.U2 = F.dropout2d(x.shape, self.p_h)
-        x *= self.U2
-
         x = self.maxPool2(x)
         x = self.relu3(self.conv3(x))
-        self.U3 = F.dropout2d(x.shape, self.p_h)
-        x *= self.U3
 
         # (N, C, 1, 1) -> (N, C)
         x = x.reshape(x.shape[0], -1)
         x = self.relu4(self.fc1(x))
-        self.U4 = F.dropout(x.shape, self.p_h)
+        self.U1 = F.dropout(x.shape, self.p_h)
 
         x = self.fc2(x)
 
@@ -198,24 +187,21 @@ class LeNet5(Net):
 
     def backward(self, grad_out):
         da6 = self.fc2.backward(grad_out)
-        da6 *= self.U4
+        da6 *= self.U1
 
         dz6 = self.relu4.backward(da6)
         da5 = self.fc1.backward(dz6)
         # [N, C] -> [N, C, 1, 1]
         N, C = da5.shape[:2]
         da5 = da5.reshape(N, C, 1, 1)
-        da5 *= self.U3
         dz5 = self.relu3.backward(da5)
         da4 = self.conv3.backward(dz5)
 
         dz4 = self.maxPool2.backward(da4)
-        da4 *= self.U2
         dz3 = self.relu2.backward(dz4)
         da2 = self.conv2.backward(dz3)
 
         da1 = self.maxPool1.backward(da2)
-        da1 *= self.U1
         dz1 = self.relu1.backward(da1)
         self.conv1.backward(dz1)
 
