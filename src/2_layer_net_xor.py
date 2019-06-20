@@ -4,13 +4,15 @@
 # @Author  : zj
 
 import models
+import models.utils
 import vision
 import vision.data
 import nn
-from data.load_mnist import *
+import numpy as np
+import os
 
 """
-XOR问题
+XOR
 """
 
 
@@ -40,11 +42,6 @@ def two_layer_train():
     draw = vision.Draw()
     draw(loss_list, '逻辑异或')
 
-    params = net.get_params()
-    print('FC1: {}'.format(params['fc1']))
-    print('FC2: {}'.format(params['fc2']))
-    # save_params(params, path='./two_layer_net.pkl')
-
     scores = net.forward(input_array)
     accuracy = vision.Accuracy()
     res, predict = accuracy(scores, xor_array)
@@ -52,20 +49,25 @@ def two_layer_train():
     print('predict: ' + str(predict))
     print('training accuracy: %.2f %%' % (res * 100))
 
+    if res == 1:
+        params = net.get_params()
+        print('FC1: {}'.format(params['fc1']))
+        print('FC2: {}'.format(params['fc2']))
+        models.utils.save_params(params, path=os.path.join(os.getcwd(), 'two_layer_net.pkl'))
 
-def test():
-    # params = load_params('./two_layer_net.pkl')
-    # print(params)
+
+def two_layer_test():
+    params = models.utils.load_params(os.path.join(os.getcwd(), 'two_layer_net.pkl'))
+    print(params)
     net = models.two_layer_net(num_in=2, num_hidden=6, num_out=2)
-    # net.set_params(params)
+    net.set_params(params)
 
-    input_array = np.array([[0, 0], [0, 1], [1, 0], [1, 1]])
-    xor_array = np.array([0, 1, 1, 0])
+    input_array, xor_array = vision.data.load_xor()
 
     for item in input_array:
         print(net.forward(np.atleast_2d(item)))
 
 
 if __name__ == '__main__':
-    two_layer_train()
-    # test()
+    # two_layer_train()
+    two_layer_test()
