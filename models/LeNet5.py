@@ -8,9 +8,7 @@ import nn
 from .Net import Net
 from .utils import load_params
 
-
 __all__ = ['LeNet5', 'lenet5']
-
 
 model_urls = {
     'lenets': ''
@@ -22,7 +20,7 @@ class LeNet5(Net):
     LeNet-5网络
     """
 
-    def __init__(self, in_channels, momentum=0, nesterov=False, p_h=1.0):
+    def __init__(self, in_channels=1, out_channels=10, momentum=0, nesterov=False, p_h=1.0):
         super(LeNet5, self).__init__()
         self.conv1 = nn.Conv2d(in_channels, 5, 5, 6, stride=1, padding=0, momentum=momentum, nesterov=nesterov)
         self.conv2 = nn.Conv2d(6, 5, 5, 16, stride=1, padding=0, momentum=momentum, nesterov=nesterov)
@@ -31,7 +29,7 @@ class LeNet5(Net):
         self.maxPool1 = nn.MaxPool(2, 2, 6, stride=2)
         self.maxPool2 = nn.MaxPool(2, 2, 16, stride=2)
         self.fc1 = nn.FC(120, 84, momentum=momentum, nesterov=nesterov)
-        self.fc2 = nn.FC(84, 10, momentum=momentum, nesterov=nesterov)
+        self.fc2 = nn.FC(84, out_channels, momentum=momentum, nesterov=nesterov)
 
         self.relu1 = nn.ReLU()
         self.relu2 = nn.ReLU()
