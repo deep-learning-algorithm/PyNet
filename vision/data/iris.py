@@ -8,8 +8,8 @@ import numpy as np
 from sklearn import utils
 from sklearn.model_selection import train_test_split
 
+
 # iris_path = '/home/zj/data/iris-species/Iris.csv'
-iris_path = '/home/lab305/Documents/data/iris-species/Iris.csv'
 
 
 def load_iris(iris_path, shuffle=True, tsize=0.8):
