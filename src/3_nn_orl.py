@@ -26,7 +26,7 @@ lr = 2e-2
 # 正则化强度
 reg_rate = 1e-3
 
-data_path = '/home/lab305/Documents/data/decompress_cifar_10'
+data_path = '/home/lab305/Documents/data/att_faces_png'
 
 if __name__ == '__main__':
     x_train, x_test, y_train, y_test = vision.data.load_orl(data_path, shuffle=True)
