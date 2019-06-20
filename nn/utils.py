@@ -3,8 +3,6 @@
 # @Time    : 19-5-27 上午11:16
 # @Author  : zj
 
-import numpy as np
-
 
 def conv_fc2output(inputs, batch_size, out_height, out_width):
     output = inputs.copy()

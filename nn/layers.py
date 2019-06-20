@@ -7,7 +7,7 @@ import numpy as np
 from abc import ABCMeta, abstractmethod
 from nn.im2row import *
 from nn.pool2row import *
-from nn.layer_utils import *
+from nn.utils import *
 
 
 class Layer(metaclass=ABCMeta):
