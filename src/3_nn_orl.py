@@ -3,12 +3,13 @@
 # @Time    : 19-6-6 上午9:47
 # @Author  : zj
 
-
-from data.load_orl import *
-from nn.nets import *
-from nn.net_utils import *
-import matplotlib.pyplot as plt
+import numpy as np
 import time
+
+import vision.data
+import models
+import models.utils as utils
+import nn
 
 # 批量大小
 batch_size = 4
@@ -25,38 +26,18 @@ lr = 2e-2
 # 正则化强度
 reg_rate = 1e-3
 
-
-def compute_accuracy(x, y, net, batch_size=128):
-    total_accuracy = 0.0
-    num = 0
-    range_list = np.arange(0, x.shape[0] - batch_size, step=batch_size)
-    for i in range_list:
-        data = x[i:i + batch_size]
-        labels = y[i:i + batch_size]
-
-        scores = net.predict(data)
-        predicted = np.argmax(scores, axis=1)
-        total_accuracy += np.mean(predicted == labels)
-        num += 1
-    return total_accuracy / num
-
-
-def draw(loss_list, title='损失图', ylabel='损失值', xlabel='迭代/100次'):
-    plt.title(title)
-    plt.ylabel(ylabel)
-    plt.xlabel(xlabel)
-    plt.plot(loss_list)
-    plt.show()
-
+data_path = '/home/lab305/Documents/data/decompress_cifar_10'
 
 if __name__ == '__main__':
-    x_train, x_test, y_train, y_test = load_orl_data(shuffle=True)
+    x_train, x_test, y_train, y_test = vision.data.load_orl(data_path, shuffle=True)
 
     x_train = x_train / 255 - 0.5
     x_test = x_test / 255 - 0.5
 
-    net = ThreeLayerNet(D, H1, H2, K, p_h=0.5)
-    criterion = CrossEntropyLoss()
+    net = models.three_layer_net(num_in=D, num_h1=H1, num_h2=H2, num_out=K, p_h=0.5)
+    criterion = nn.CrossEntropyLoss()
+
+    accuracy = vision.Accuracy()
 
     loss_list = []
     train_accuracy_list = []
@@ -83,15 +64,15 @@ if __name__ == '__main__':
         print('epoch: %d time: %f loss: %.4f' % (i + 1, end - start, avg_loss))
 
         # 计算训练数据集检测精度
-        train_accuracy = compute_accuracy(x_train, y_train, net, batch_size=batch_size)
+        train_accuracy = accuracy.compute_v2(x_train, y_train, net, batch_size=batch_size)
         train_accuracy_list.append(float('%.4f' % train_accuracy))
         if best_train_accuracy < train_accuracy:
             best_train_accuracy = train_accuracy
 
-            test_accuracy = compute_accuracy(x_test, y_test, net, batch_size=batch_size)
+            test_accuracy = accuracy.compute_v2(x_test, y_test, net, batch_size=batch_size)
             if best_test_accuracy < test_accuracy:
                 best_test_accuracy = test_accuracy
-                save_params(net.get_params(), path='three-dropout-nn-epochs-%d.pkl' % (i + 1))
+                utils.save_params(net.get_params(), path='three-dropout-nn-epochs-%d.pkl' % (i + 1))
 
         print('best train accuracy: %.2f %%   best test accuracy: %.2f %%' % (
             best_train_accuracy * 100, best_test_accuracy * 100))
@@ -101,5 +82,6 @@ if __name__ == '__main__':
         if i % 50 == 49:
             lr /= 2
 
+    draw = vision.Draw()
     draw(loss_list, title='mnist', xlabel='迭代/次')
     draw(train_accuracy_list, title='训练', ylabel='检测精度', xlabel='迭代/次')
