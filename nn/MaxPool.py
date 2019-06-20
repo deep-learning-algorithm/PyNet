@@ -38,7 +38,7 @@ class MaxPool(Layer):
         out_h = int((H - self.filter_h) / self.stride + 1)
         out_w = int((W - self.filter_w) / self.stride + 1)
 
-        a = pool2row_indices(input, self.filter_h, self.filter_w, stride=self.stride)
+        a = pool2row_indices(inputs, self.filter_h, self.filter_w, stride=self.stride)
         z = np.max(a, axis=1)
         self.arg_z = np.argmax(a, axis=1)
         self.input_shape = inputs.shape
