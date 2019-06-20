@@ -5,6 +5,7 @@
 
 import models
 import vision
+import vision.data
 import nn
 from data.load_mnist import *
 
@@ -14,10 +15,9 @@ XOR问题
 
 
 def two_layer_train():
-    net = models.two_layer_net(2, 6, 2)
+    net = models.two_layer_net(num_in=2, num_hidden=6, num_out=2)
 
-    input_array = np.array([[0, 0], [0, 1], [1, 0], [1, 1]])
-    xor_array = np.array([0, 1, 1, 0])
+    input_array, xor_array = vision.data.load_xor()
 
     criterion = nn.CrossEntropyLoss()
 
@@ -56,7 +56,7 @@ def two_layer_train():
 def test():
     # params = load_params('./two_layer_net.pkl')
     # print(params)
-    net = models.two_layer_net(2, 6, 2)
+    net = models.two_layer_net(num_in=2, num_hidden=6, num_out=2)
     # net.set_params(params)
 
     input_array = np.array([[0, 0], [0, 1], [1, 0], [1, 1]])

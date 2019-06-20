@@ -19,7 +19,7 @@ class TwoLayerNet(Net):
     实现2层神经网络
     """
 
-    def __init__(self, num_in, num_hidden, num_out):
+    def __init__(self, num_in=0, num_hidden=0, num_out=0):
         super(TwoLayerNet, self).__init__()
         self.fc1 = nn.FC(num_in, num_hidden)
         self.relu = nn.ReLU()
@@ -53,12 +53,12 @@ class TwoLayerNet(Net):
         self.fc2.set_params(params['fc2'])
 
 
-def two_layer_net(num_in, num_hidden, num_out, pretrained=False):
+def two_layer_net(pretrained=False, **kwargs):
     """
     创建模型对象
     """
 
-    model = TwoLayerNet(num_in, num_hidden, num_out)
+    model = TwoLayerNet(**kwargs)
     if pretrained:
         params = load_params(model_urls['two_layer_net'])
         model.set_params(params)
