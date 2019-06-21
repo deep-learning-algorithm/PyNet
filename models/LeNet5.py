@@ -136,6 +136,6 @@ def lenet5(pretrained=False, **kwargs):
 
     model = LeNet5(**kwargs)
     if pretrained:
-        params = load_params(model_urls['two_layer_net'])
+        params = load_params(model_urls['lenet5'])
         model.set_params(params)
     return model

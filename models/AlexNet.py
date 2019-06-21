@@ -21,7 +21,7 @@ class AlexNet(Net):
 
     def __init__(self, in_channels, out_channels, momentum=0, nesterov=False):
         super(AlexNet, self).__init__()
-        self.conv1 = nn.Conv2d(in_channels, 227, 227, 96, stride=4, padding=0, momentum=momentum, nesterov=nesterov)
+        self.conv1 = nn.Conv2d(in_channels, 11, 11, 96, stride=4, padding=0, momentum=momentum, nesterov=nesterov)
         self.conv2 = nn.Conv2d(96, 5, 5, 256, stride=1, padding=2, momentum=momentum, nesterov=nesterov)
         self.conv3 = nn.Conv2d(256, 3, 3, 384, stride=1, padding=1, momentum=momentum, nesterov=nesterov)
         self.conv4 = nn.Conv2d(384, 3, 3, 384, stride=1, padding=1, momentum=momentum, nesterov=nesterov)
@@ -151,6 +151,6 @@ def alexnet(pretrained=False, **kwargs):
 
     model = AlexNet(**kwargs)
     if pretrained:
-        params = load_params(model_urls['two_layer_net'])
+        params = load_params(model_urls['alexnet'])
         model.set_params(params)
     return model

@@ -90,6 +90,6 @@ def three_layer_net(pretrained=False, **kwargs):
 
     model = ThreeLayerNet(**kwargs)
     if pretrained:
-        params = load_params(model_urls['two_layer_net'])
+        params = load_params(model_urls['three_layer_net'])
         model.set_params(params)
     return model
