@@ -32,7 +32,7 @@ p_h = 0.5
 data_path = '/home/lab305/Documents/data/decompress_cifar_10'
 
 if __name__ == '__main__':
-    x_train, x_test, y_train, y_test = vision.data.load_cifar10(data_path, shuffle=True)
+    x_train, x_test, y_train, y_test = vision.data.load_cifar10(data_path, shuffle=True, is_flatten=True)
 
     x_train = x_train / 255 - 0.5
     x_test = x_test / 255 - 0.5

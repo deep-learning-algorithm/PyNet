@@ -50,7 +50,7 @@ class NIN(Net):
         self.relu8 = nn.ReLU()
         self.relu9 = nn.ReLU()
 
-        self.dropout = nn.Dropout()
+        self.dropout = nn.Dropout2d()
 
         self.p_h = p_h
         self.U1 = None
@@ -85,7 +85,7 @@ class NIN(Net):
 
     def backward(self, grad_out):
         # grad_out.shape = [N, C]
-        assert len(grad_out) == 2
+        assert len(grad_out.shape) == 2
         da11 = self.gap.backward(grad_out)
 
         dz11 = self.relu9.backward(da11)
