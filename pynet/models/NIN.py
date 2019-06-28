@@ -4,7 +4,7 @@
 # @Author  : zj
 
 
-import nn
+import pynet.nn as nn
 from .Net import Net
 from .utils import load_params
 

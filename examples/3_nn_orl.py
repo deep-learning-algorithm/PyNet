@@ -6,9 +6,9 @@
 import numpy as np
 import time
 
-import pynet.vision.data
+from pynet.vision.data import orl
 import pynet.models.utils as utils
-from pynet import nn, models
+from pynet import nn, models, vision
 
 # 批量大小
 batch_size = 4
@@ -28,7 +28,7 @@ reg_rate = 1e-3
 data_path = '/home/lab305/Documents/data/att_faces_png'
 
 if __name__ == '__main__':
-    x_train, x_test, y_train, y_test = pynet.vision.data.load_orl(data_path, shuffle=True)
+    x_train, x_test, y_train, y_test = orl.load_orl(data_path, shuffle=True)
 
     x_train = x_train / 255 - 0.5
     x_test = x_test / 255 - 0.5
@@ -71,7 +71,7 @@ if __name__ == '__main__':
             test_accuracy = accuracy.compute_v2(x_test, y_test, net, batch_size=batch_size)
             if best_test_accuracy < test_accuracy:
                 best_test_accuracy = test_accuracy
-                utils.save_params(net.get_params(), path='three-dropout-nn-epochs-%d.pkl' % (i + 1))
+                # utils.save_params(net.get_params(), path='three-dropout-nn-epochs-%d.pkl' % (i + 1))
 
         print('best train accuracy: %.2f %%   best test accuracy: %.2f %%' % (
             best_train_accuracy * 100, best_test_accuracy * 100))

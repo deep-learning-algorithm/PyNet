@@ -3,10 +3,6 @@
 # @Time    : 19-6-20 下午7:22
 # @Author  : zj
 
-import torchvision.transforms as transforms
-import torchvision.datasets as datasets
-from torch.utils.data import DataLoader
-
 import numpy as np
 import os
 from .utils import *
@@ -66,19 +62,3 @@ def load_cifar10(cifar10_path, shuffle=True, is_flatten=False):
                 x_train.append(np.transpose(img, (2, 0, 1)))
 
     return np.array(x_train), np.array(x_test), np.array(y_train), np.array(y_test)
-
-
-def load_cifar10_pytorch(cifar10_path, batch_size=128, shuffle=False):
-    transform = transforms.Compose([
-        transforms.Resize((227, 227)),
-        transforms.ToTensor(),
-        transforms.Normalize(mean=(0.5, 0.5, 0.5), std=(0.5, 0.5, 0.5))
-    ])
-
-    train_data_set = datasets.CIFAR10(root=cifar10_path, train=True, download=True, transform=transform)
-    test_data_set = datasets.CIFAR10(root=cifar10_path, train=False, download=True, transform=transform)
-
-    train_loader = DataLoader(train_data_set, batch_size=batch_size, shuffle=shuffle, num_workers=2)
-    test_loader = DataLoader(test_data_set, batch_size=batch_size, shuffle=shuffle, num_workers=2)
-
-    return train_loader, test_loader

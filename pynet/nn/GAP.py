@@ -5,7 +5,7 @@
 
 
 import numpy as np
-from pynet.nn import *
+from .Layer import *
 
 __all__ = ['GAP']
 

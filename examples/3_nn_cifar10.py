@@ -4,8 +4,8 @@
 # @Author  : zj
 
 
-from pynet import nn, models
-import pynet.vision.data
+from pynet import nn, models, vision
+from pynet.vision.data import cifar
 import time
 import numpy as np
 
@@ -31,7 +31,7 @@ p_h = 0.5
 data_path = '/home/lab305/Documents/data/decompress_cifar_10'
 
 if __name__ == '__main__':
-    x_train, x_test, y_train, y_test = pynet.vision.data.load_cifar10(data_path, shuffle=True, is_flatten=True)
+    x_train, x_test, y_train, y_test = cifar.load_cifar10(data_path, shuffle=True, is_flatten=True)
 
     x_train = x_train / 255 - 0.5
     x_test = x_test / 255 - 0.5

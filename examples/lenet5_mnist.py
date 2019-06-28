@@ -3,9 +3,9 @@
 # @Time    : 19-5-27 下午6:40
 # @Author  : zj
 
-from pynet import nn, models
+from pynet import nn, models, vision
 import pynet.models.utils as utils
-import pynet.vision.data
+from pynet.vision.data import mnist
 import numpy as np
 import time
 
@@ -19,7 +19,7 @@ epochs = 1000
 
 
 def lenet5_train():
-    x_train, x_test, y_train, y_test = pynet.vision.data.load_mnist(data_path, shuffle=True)
+    x_train, x_test, y_train, y_test = mnist.load_mnist(data_path, shuffle=True)
 
     # 标准化
     x_train = x_train / 255.0 - 0.5
@@ -87,7 +87,7 @@ def lenet5_test(model_path):
     net = models.lenet5()
     net.set_params(params)
 
-    x_train, x_test, y_train, y_test = pynet.vision.data.load_mnist(data_path, shuffle=True)
+    x_train, x_test, y_train, y_test = mnist.load_mnist(data_path, shuffle=True)
 
     # 标准化
     x_train = x_train / 255.0 - 0.5

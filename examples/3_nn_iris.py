@@ -4,9 +4,9 @@
 # @Author  : zj
 
 import os
-import pynet.vision.data
+from pynet.vision.data import iris
 import pynet.models.utils as utils
-from pynet import nn, models
+from pynet import nn, models, vision
 
 """
 iris分类
@@ -34,7 +34,7 @@ lambda_rate = 1e-3
 iris_path = '/home/lab305/Documents/data/iris-species/Iris.csv'
 
 if __name__ == '__main__':
-    x_train, x_test, y_train, y_test = pynet.vision.data.load_iris(iris_path, shuffle=True, tsize=0.8)
+    x_train, x_test, y_train, y_test = iris.load_iris(iris_path, shuffle=True, tsize=0.8)
 
     net = models.three_layer_net(num_in=D, num_h1=H1, num_h2=H2, num_out=K)
     criterion = nn.CrossEntropyLoss()
@@ -63,7 +63,7 @@ if __name__ == '__main__':
             train_list.append(train_accuracy)
             test_list.append(test_accuracy)
             if train_accuracy >= 0.9999 and test_accuracy >= 0.9999:
-                utils.save_params(net.get_params(), path=os.path.join(os.getcwd(), 'three_layer_net_iris.pkl'))
+                # utils.save_params(net.get_params(), path=os.path.join(os.getcwd(), 'three_layer_net_iris.pkl'))
                 break
         if (i % 10000) == 9999:
             # 每隔10000次降低学习率

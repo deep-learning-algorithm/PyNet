@@ -3,9 +3,8 @@
 # @Time    : 19-5-27 下午6:39
 # @Author  : zj
 
-import pynet.models.utils
-import pynet.vision.data
 from pynet import nn, models, vision
+from pynet.vision.data import xor
 import numpy as np
 import os
 
@@ -17,7 +16,7 @@ XOR
 def two_layer_train():
     net = models.two_layer_net(num_in=2, num_hidden=6, num_out=2)
 
-    input_array, xor_array = pynet.vision.data.load_xor()
+    input_array, xor_array = xor.load_xor()
 
     criterion = nn.CrossEntropyLoss()
 
@@ -51,16 +50,16 @@ def two_layer_train():
         params = net.get_params()
         print('FC1: {}'.format(params['fc1']))
         print('FC2: {}'.format(params['fc2']))
-        pynet.models.utils.save_params(params, path=os.path.join(os.getcwd(), 'two_layer_net.pkl'))
+        # models.utils.save_params(params, path=os.path.join('/home/zj/deeplearning/pkl/', 'two_layer_net.pkl'))
 
 
 def two_layer_test():
-    params = pynet.models.utils.load_params(os.path.join(os.getcwd(), 'two_layer_net.pkl'))
+    params = models.utils.load_params(os.path.join(os.getcwd(), 'two_layer_net.pkl'))
     print(params)
     net = models.two_layer_net(num_in=2, num_hidden=6, num_out=2)
     net.set_params(params)
 
-    input_array, xor_array = pynet.vision.data.load_xor()
+    input_array, xor_array = xor.load_xor()
 
     for item in input_array:
         print(net.forward(np.atleast_2d(item)))

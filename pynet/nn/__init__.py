@@ -1,6 +1,4 @@
-# __all__ = ['FC', 'ReLU', 'Dropout', 'Conv2d', 'MaxPool', 'CrossEntropyLoss']
-
-
+from .Layer import Layer
 from .FC import FC
 from .ReLU import ReLU
 from .Dropout import Dropout

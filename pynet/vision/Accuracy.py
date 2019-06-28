@@ -5,7 +5,6 @@
 
 
 import numpy as np
-import torch
 
 
 class Accuracy(object):
@@ -34,18 +33,4 @@ class Accuracy(object):
             total_accuracy += np.mean(predicted == labels)
             num += 1
 
-        return total_accuracy / num
-
-    def compute_pytorch(self, loader, net, device):
-        total_accuracy = 0
-        num = 0
-        for item in loader:
-            data, labels = item
-            data = data.to(device)
-            labels = labels.to(device)
-
-            scores = net.forward(data)
-            predicted = torch.argmax(scores, dim=1)
-            total_accuracy += torch.mean((predicted == labels).float()).item()
-            num += 1
         return total_accuracy / num

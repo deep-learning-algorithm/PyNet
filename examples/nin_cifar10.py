@@ -3,9 +3,9 @@
 # @Time    : 19-6-21 下午2:45
 # @Author  : zj
 
-from pynet import nn, models
+from pynet import nn, models, vision
 import pynet.models.utils as utils
-import pynet.vision.data
+from pynet.vision.data import cifar
 import numpy as np
 import time
 
@@ -20,7 +20,7 @@ p_h = 0.5
 
 
 def nin_train():
-    x_train, x_test, y_train, y_test = pynet.vision.data.load_cifar10(data_path, shuffle=True)
+    x_train, x_test, y_train, y_test = cifar.load_cifar10(data_path, shuffle=True)
 
     # 标准化
     x_train = x_train / 255.0 - 0.5
