@@ -8,14 +8,30 @@
 
 ```
 .
-├── models              - 网络模型
-├── nn                  - 层定义
-├── pkl                 - 训练参数包
-├── plt                 - 绘图，待修改
-├── pytorch             - pytorch测试，待修改
-├── README.md           
-├── src                 - numpy模型测试
-└── vision              - 数据操作
+├── examples                          # pynet使用示例
+│   ├── 2_nn_xor.py
+│   ├── 3_nn_cifar10.py
+│   ├── 3_nn_iris.py
+│   ├── 3_nn_orl.py
+│   ├── lenet5_mnist.py
+│   ├── nin_cifar10.py
+│   └── nin_cifar10_pytorch.py
+├── plt                               # 绘图相关（待调整）
+│   ├── anneal_plt.py
+│   ├── lenet5_plt.py
+│   └── plt.py
+├── pynet                             # PyNet库
+│   ├── __init__.py
+│   ├── models                        # 模型定义
+│   ├── nn                            # 层定义
+│   └── vision                        # 数据操作
+├── pytorch                           # PyTorch使用示例
+│   ├── examples                      
+│   ├── models                        # 模型定义
+│   └── vision                        # 数据操作
+└── README.md
+
+10 directories, 12 files
 ```
 
 当前实现内容：
