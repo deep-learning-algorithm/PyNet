@@ -1,36 +1,34 @@
 
 ![](./logo.png)
 
-#  Numpy-based deep learning library 
+# 基于numpy的深度学习库
 
-[中文版本（Chinese version）]()
+基于`numpy`实现的卷积神经网络，模块化设计保证模型的轻松实现，适用于深度学习初级研究人员的入门
 
-Convolutional neural network based on numpy, modular design guarantees easy implementation of the model, which is suitable for the introduction of junior researchers in deep learning.
+*同时附带了PyTorch示例*
 
-*A PyTorch example is also included.*
+## 功能特性
 
-## Features
+已实现网络模型（位于`pynet/models`）：
 
-Realized Network Model（Located on the pynet/models）：
-
-* 2-Layer Neural Network
-* 3-Layer Neural Network
+* 2层神经网络
+* 3层神经网络
 * LeNet-5
 * AlexNet
 * NIN
 
-Realized Network Layer（Located on the pynet/nn）：
+已实现网络层（位于`pynet/nn`）：
 
-* Convolution Layer (Conv2d)
-* Fully-Connection Layer (FC)
-* Max-Pooling layer (MaxPool)
-* ReLU Layer (ReLU)
-* Random Dropout Layer (Dropout/Dropout2d)
+* 卷积层
+* 全连接层
+* 最大池化层
+* ReLU
+* 随机失活
 * Softmax
-* Cross Entropy Loss
-* Gloabl Average Pool (GAP)
+* 交叉熵损失
+* 全局平均池化层
 
-## Catalog
+## 工程结构
 
 ```
 .
