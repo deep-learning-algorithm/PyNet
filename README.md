@@ -1,8 +1,7 @@
-# PyNet
 
-深度学习
+![](./logo.png)
 
-`python numpy`实现
+# 基于numpy的深度学习库
 
 工程结构：
 
