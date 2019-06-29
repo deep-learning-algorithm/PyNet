@@ -57,7 +57,7 @@
 
 ## 版本化
 
-我们使用[SemVer](http://semver.org/)进行版本控制。 对于可用的版本，请参阅仓库中的标记
+我们使用[SemVer](http://semver.org/)进行版本控制。 对于可用的版本，请参阅仓库中的[标记](https://github.com/zjZSTU/PyNet/releases)
 
 ## 作者
 

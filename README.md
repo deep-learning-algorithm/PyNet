@@ -3,7 +3,7 @@
 
 #  Numpy-based deep learning library 
 
-[中文版本（Chinese version）]()
+[中文版本（Chinese version）](./README.zh-CN.md)
 
 Convolutional neural network based on numpy, modular design guarantees easy implementation of the model, which is suitable for the introduction of junior researchers in deep learning.
 
@@ -59,7 +59,7 @@ Realized Network Layer（Located on the pynet/nn）：
 
 ## Versioning
 
-We use [SemVer](http://semver.org/) for versioning. For the versions available, see the tags on this repository.
+We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags](https://github.com/zjZSTU/PyNet/releases) on this repository.
 
 ## Authors
 
