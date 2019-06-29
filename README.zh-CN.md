@@ -1,5 +1,5 @@
 
-![](./logo.png)
+![](imgs/logo.png)
 
 # 基于numpy的深度学习库
 

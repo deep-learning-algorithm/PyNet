@@ -1,5 +1,5 @@
 
-![](./logo.png)
+![](imgs/logo.png)
 
 #  Numpy-based deep learning library 
 
