@@ -68,3 +68,8 @@ We use [SemVer](http://semver.org/) for versioning. For the versions available, 
 ## License
 
 This project is licensed under the Apache License v2.0 - see the LICENSE file for details
+
+## Acknowledgments
+
+* [cs231n](http://cs231n.github.io/)
+* [PyTorch](https://pytorch.org/)

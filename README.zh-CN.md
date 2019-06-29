@@ -66,3 +66,8 @@
 ## 协议
 
 本工程基于`Apache v2.0`协议 - 具体协议内容参考`LICENSE`文件
+
+## 致谢
+
+* [cs231n](http://cs231n.github.io/)
+* [PyTorch](https://pytorch.org/)
