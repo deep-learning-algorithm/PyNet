@@ -22,7 +22,7 @@ Realized Network Model（Located on the pynet/models）：
 Realized Network Layer（Located on the pynet/nn）：
 
 * Convolution Layer (Conv2d)
-* Fully-Connection Layer (FC)
+* Fully-Connected Layer (FC)
 * Max-Pooling layer (MaxPool)
 * ReLU Layer (ReLU)
 * Random Dropout Layer (Dropout/Dropout2d)
