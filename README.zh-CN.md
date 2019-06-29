@@ -54,3 +54,15 @@
 │   ├── models                        # 模型定义
 │   └── vision                        # 数据操作
 ```
+
+## 版本化
+
+我们使用[SemVer](http://semver.org/)进行版本控制。 对于可用的版本，请参阅仓库中的标记
+
+## 作者
+
+* zhujian - *初始工作* - [zjZSTU](https://github.com/zjZSTU)
+
+## 协议
+
+本工程基于`Apache v2.0`协议 - 具体协议内容参考`LICENSE`文件

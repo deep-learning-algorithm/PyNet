@@ -56,3 +56,15 @@ Realized Network Layer（Located on the pynet/nn）：
 │   ├── models                        # 模型定义
 │   └── vision                        # 数据操作
 ```
+
+## Versioning
+
+We use [SemVer](http://semver.org/) for versioning. For the versions available, see the tags on this repository.
+
+## Authors
+
+* zhujian - *Initial work* - [zjZSTU](https://github.com/zjZSTU)
+
+## License
+
+This project is licensed under the Apache License v2.0 - see the LICENSE file for details
