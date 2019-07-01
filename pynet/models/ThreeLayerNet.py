@@ -1,37 +1,43 @@
 # -*- coding: utf-8 -*-
 
-# @Time    : 19-6-20 下午2:18
+# @Time    : 19-6-30 下午4:20
 # @Author  : zj
+
 
 from pynet import nn
 from .Net import Net
-from .utils import load_params
 
-__all__ = ['ThreeLayerNet', 'three_layer_net']
-
-model_urls = {
-    'three_layer_net': ''
-}
+__all__ = ['ThreeLayerNet']
 
 
 class ThreeLayerNet(Net):
     """
-    实现3层神经网络
+    实现2层神经网络
     """
 
-    def __init__(self, num_in=0, num_h1=0, num_h2=0, num_out=0, momentum=0, nesterov=False, p_h=1.0):
+    def __init__(self, num_in=0, num_h1=0, num_h2=0, num_out=0, dropout=1.0, weight_scale=1e-2):
         super(ThreeLayerNet, self).__init__()
-        self.fc1 = nn.FC(num_in, num_h1, momentum=momentum, nesterov=nesterov)
-        self.relu1 = nn.ReLU()
-        self.fc2 = nn.FC(num_h1, num_h2, momentum=momentum, nesterov=nesterov)
-        self.relu2 = nn.ReLU()
-        self.fc3 = nn.FC(num_h2, num_out, momentum=momentum, nesterov=nesterov)
+        self.fc1 = nn.FC(num_in, num_h1, weight_scale=weight_scale)
+        self.fc2 = nn.FC(num_h1, num_h2, weight_scale=weight_scale)
+        self.fc3 = nn.FC(num_h2, num_out, weight_scale=weight_scale)
 
-        self.dropout = nn.Dropout()
+        self.relu = nn.ReLU()
+        self.z1_cache = None
+        self.z1 = None
+        self.z2_cache = None
+        self.z2 = None
+        self.z3_cache = None
 
-        self.p_h = p_h
-        self.U1 = None
-        self.U2 = None
+        self.use_dropout = dropout != 1.0
+        self.dropout_param = {}
+        if self.use_dropout:
+            self.dropout_param['mode'] = 'train'
+            self.dropout_param['p'] = dropout
+            self.dropout = nn.Dropout()
+            self.U1 = None
+            self.U2 = None
+
+        self.params = self._get_params()
 
     def __call__(self, inputs):
         return self.forward(inputs)
@@ -39,57 +45,49 @@ class ThreeLayerNet(Net):
     def forward(self, inputs):
         # inputs.shape = [N, D_in]
         assert len(inputs.shape) == 2
-        a1 = self.relu1(self.fc1(inputs))
-        self.U1 = self.dropout(a1.shape, self.p_h)
-        a1 *= self.U1
+        self.z1, self.z1_cache = self.fc1(inputs, self.params['W1'], self.params['b1'])
+        a1 = self.relu(self.z1)
+        if self.use_dropout and self.dropout_param['mode'] == 'train':
+            self.U1 = self.dropout(a1.shape, self.dropout_param['p'])
+            a1 *= self.U1
 
-        a2 = self.relu2(self.fc2(a1))
-        self.U2 = self.dropout(a2.shape, self.p_h)
-        a2 *= self.U2
+        self.z2, self.z2_cache = self.fc2(a1, self.params['W2'], self.params['b2'])
+        a2 = self.relu(self.z2)
+        if self.use_dropout and self.dropout_param['mode'] == 'train':
+            self.U2 = self.dropout(a2.shape, self.dropout_param['p'])
+            a2 *= self.U2
 
-        z3 = self.fc3(a2)
+        z3, self.z3_cache = self.fc3(a2, self.params['W3'], self.params['b3'])
 
         return z3
 
     def backward(self, grad_out):
-        da2 = self.fc3.backward(grad_out) * self.U2
-        dz2 = self.relu2.backward(da2)
-        da1 = self.fc2.backward(dz2) * self.U1
-        dz1 = self.relu1.backward(da1)
-        da0 = self.fc1.backward(dz1)
+        grad = dict()
+        grad['W3'], grad['b3'], da2 = self.fc3.backward(grad_out, self.z3_cache)
+        if self.use_dropout and self.dropout_param['mode'] == 'train':
+            da2 *= self.U2
 
-    def update(self, lr=1e-3, reg=1e-3):
-        self.fc3.update(learning_rate=lr, regularization_rate=reg)
-        self.fc2.update(learning_rate=lr, regularization_rate=reg)
-        self.fc1.update(learning_rate=lr, regularization_rate=reg)
+        dz2 = self.relu.backward(da2, self.z2)
+        grad['W2'], grad['b2'], da1 = self.fc2.backward(dz2, self.z2_cache)
+        if self.use_dropout and self.dropout_param['mode'] == 'train':
+            da2 *= self.U2
 
-    def predict(self, inputs):
-        # inputs.shape = [N, D_in]
-        assert len(inputs.shape) == 2
-        a1 = self.relu1(self.fc1(inputs))
-        a2 = self.relu2(self.fc2(a1))
-        z3 = self.fc3(a2)
+        dz1 = self.relu.backward(da1, self.z1)
+        grad['W1'], grad['b1'], da0 = self.fc1.backward(dz1, self.z1_cache)
 
-        return z3
+        return grad
 
-    def get_params(self):
-        return {'fc1': self.fc1.get_params(), 'fc2': self.fc2.get_params(), 'fc3': self.fc3.get_params(),
-                'p_h': self.p_h}
+    def _get_params(self):
+        params = dict()
+        params['W1'], params['b1'] = self.fc1.get_params()
+        params['W2'], params['b2'] = self.fc2.get_params()
+        params['W3'], params['b3'] = self.fc3.get_params()
+        return params
 
-    def set_params(self, params):
-        self.fc1.set_params(params['fc1'])
-        self.fc2.set_params(params['fc2'])
-        self.fc3.set_params(params['fc3'])
-        self.p_h = params.get('p_h', 1.0)
+    def train(self):
+        if self.use_dropout:
+            self.dropout_param['mode'] = 'train'
 
-
-def three_layer_net(pretrained=False, **kwargs):
-    """
-    创建模型对象
-    """
-
-    model = ThreeLayerNet(**kwargs)
-    if pretrained:
-        params = load_params(model_urls['three_layer_net'])
-        model.set_params(params)
-    return model
+    def eval(self):
+        if self.use_dropout:
+            self.dropout_param['mode'] = 'test'

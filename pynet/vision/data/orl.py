@@ -12,10 +12,8 @@ import warnings
 
 warnings.filterwarnings('ignore')
 
-dst_size = (23, 28)
 
-
-def load_orl(orl_path, shuffle=True):
+def load_orl(orl_path, shuffle=True, dst_size=(23, 28)):
     """
     加载ORL数据
     """

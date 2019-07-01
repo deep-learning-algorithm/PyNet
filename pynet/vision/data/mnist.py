@@ -12,7 +12,7 @@ cate_list = list(range(10))
 dst_size = (32, 32)
 
 
-def load_mnist(mnist_path, shuffle=True):
+def load_mnist(mnist_path, dst_size=None, shuffle=True, is_flatten=False):
     """
     加载mnist数据
     """
@@ -38,7 +38,12 @@ def load_mnist(mnist_path, shuffle=True):
             file_path = os.path.join(data_dir, filename)
             img = read_image(file_path, is_gray=True)
             if img is not None:
-                x_test.append(change_channel(resize_image(img, dst_size=dst_size)))
+                if dst_size is not None:
+                    img = resize_image(img, dst_size=dst_size)
+                if is_flatten:
+                    x_test.append(img.reshape(-1))
+                else:
+                    x_test.append(np.transpose(img, (2, 0, 1)))
                 y_test.append(i)
 
     train_file_list = np.array(train_file_list)
@@ -49,7 +54,13 @@ def load_mnist(mnist_path, shuffle=True):
     for file_path in train_file_list:
         img = read_image(file_path, is_gray=True)
         if img is not None:
-            x_train.append(change_channel(resize_image(img, dst_size=dst_size)))
+            if dst_size is not None:
+                img = resize_image(img, dst_size=dst_size)
+
+            if is_flatten:
+                x_train.append(img.reshape(-1))
+            else:
+                x_train.append(np.transpose(img, (2, 0, 1)))
             y_train.append(int(os.path.split(file_path)[0].split('/')[-1]))
 
     return np.array(x_train), np.array(x_test), np.array(y_train), np.array(y_test)

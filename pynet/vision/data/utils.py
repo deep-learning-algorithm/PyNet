@@ -18,14 +18,3 @@ def resize_image(src, dst_size):
     if src.shape == dst_size:
         return src
     return cv2.resize(src, dst_size)
-
-
-def change_channel(inputs):
-    if len(inputs.shape) == 2:
-        # 灰度图
-        dst_shape = [1]
-        dst_shape.extend(inputs.shape)
-        return inputs.reshape(dst_shape)
-    else:
-        # 彩色图
-        return inputs.transpose(2, 0, 1)

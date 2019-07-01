@@ -19,7 +19,7 @@ class Accuracy(object):
         predicted = np.argmax(scores, axis=1)
         return np.mean(predicted == labels), predicted
 
-    def compute_v2(self, data_array, labels_array, net, batch_size=128):
+    def check_accuracy(self, data_array, labels_array, net, batch_size=128):
         total_accuracy = 0.0
         num = 0
 
