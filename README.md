@@ -5,7 +5,7 @@
 
 [中文版本（Chinese version）](./README.zh-CN.md)
 
-Convolutional neural network based on numpy, modular design guarantees easy implementation of the model, which is suitable for the introduction of junior researchers in deep learning.
+Implementation of deep learning based on numpy, modular design guarantees easy implementation of the model, which is suitable for the introduction of junior researchers in deep learning.
 
 *A PyTorch example is also included.*
 
