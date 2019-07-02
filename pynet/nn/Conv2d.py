@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# @Time    : 19-6-20 下午2:29
+# @Time    : 19-7-2 上午9:53
 # @Author  : zj
 
 
@@ -9,38 +9,38 @@ from .im2row import *
 from .pool2row import *
 from .Layer import *
 
-__all__ = ['Conv2d']
+__all__ = ['Conv2d2']
 
 
-class Conv2d(Layer):
+class Conv2d2:
     """
     convolutional layer
     卷积层
     """
 
-    def __init__(self, in_c, filter_h, filter_w, filter_num, stride=1, padding=0, momentum=0, nesterov=False):
-        super(Conv2d, self).__init__()
+    def __init__(self, in_c, filter_h, filter_w, filter_num, stride=1, padding=0, weight_scale=1e-2):
+        """
+        :param in_c: 输入数据体通道数
+        :param filter_h: 滤波器长
+        :param filter_w: 滤波器宽
+        :param filter_num: 滤波器个数
+        :param stride: 步长
+        :param padding: 零填充
+        :param weight_scale:
+        """
+        super(Conv2d2, self).__init__()
         self.in_c = in_c
         self.filter_h = filter_h
         self.filter_w = filter_w
         self.filter_num = filter_num
         self.stride = stride
         self.padding = padding
+        self.weight_scale = weight_scale
 
-        self.W = \
-            {'val': 0.01 * np.random.normal(loc=0, scale=1.0, size=(filter_h * filter_w * in_c, filter_num)),
-             'grad': 0,
-             'v': 0,
-             'momentum': momentum,
-             'nesterov': nesterov}
-        self.b = {'val': 0.01 * np.random.normal(loc=0, scale=1.0, size=(1, filter_num)), 'grad': 0}
-        self.a = None
-        self.input_shape = None
+    def __call__(self, inputs, w, b):
+        return self.forward(inputs, w, b)
 
-    def __call__(self, inputs):
-        return self.forward(inputs)
-
-    def forward(self, inputs):
+    def forward(self, inputs, w, b):
         # input.shape == [N, C, H, W]
         assert len(inputs.shape) == 4
         N, C, H, W = inputs.shape[:4]
@@ -48,41 +48,26 @@ class Conv2d(Layer):
         out_w = int((W - self.filter_w + 2 * self.padding) / self.stride + 1)
 
         a = im2row_indices(inputs, self.filter_h, self.filter_w, stride=self.stride, padding=self.padding)
-        z = a.dot(self.W['val']) + self.b['val']
-
-        self.input_shape = inputs.shape
-        self.a = a.copy()
+        z = a.dot(w) + b
 
         out = conv_fc2output(z, N, out_h, out_w)
-        return out
+        cache = (a, inputs.shape, w, b)
+        return out, cache
 
-    def backward(self, grad_out):
+    def backward(self, grad_out, cache):
         assert len(grad_out.shape) == 4
 
+        a, input_shape, w, b = cache
+
         dz = conv_output2fc(grad_out)
-        self.W['grad'] = self.a.T.dot(dz)
-        self.b['grad'] = np.sum(dz, axis=0, keepdims=True) / dz.shape[0]
+        grad_W = a.T.dot(dz)
+        grad_b = np.sum(dz, axis=0, keepdims=True) / dz.shape[0]
 
-        da = dz.dot(self.W['val'].T)
-        return row2im_indices(da, self.input_shape, field_height=self.filter_h,
-                              field_width=self.filter_w, stride=self.stride, padding=self.padding)
-
-    def update(self, learning_rate=0, regularization_rate=0):
-        v_prev = self.W['v']
-        self.W['v'] = self.W['momentum'] * self.W['v'] - learning_rate * (
-                self.W['grad'] + regularization_rate * self.W['val'])
-        if self.W['nesterov']:
-            self.W['val'] += (1 + self.W['momentum']) * self.W['v'] - self.W['momentum'] * v_prev
-        else:
-            self.W['val'] += self.W['v']
-        self.b['val'] -= learning_rate * (self.b['grad'])
+        da = dz.dot(w.T)
+        return grad_W, grad_b, row2im_indices(da, input_shape, field_height=self.filter_h,
+                                              field_width=self.filter_w, stride=self.stride, padding=self.padding)
 
     def get_params(self):
-        return {'W': self.W['val'], 'momentum': self.W['momentum'], 'nesterov': self.W['nesterov'], 'b': self.b['val']}
-
-    def set_params(self, params):
-        self.W['val'] = params.get('W')
-        self.b['val'] = params.get('b')
-
-        self.W['momentum'] = params.get('momentum', 0.0)
-        self.W['nesterov'] = params.get('nesterov', False)
+        return self.weight_scale * np.random.normal(loc=0, scale=1.0, size=(
+            self.filter_h * self.filter_w * self.in_c, self.filter_num)), \
+               self.weight_scale * np.random.normal(loc=0, scale=1.0, size=(1, self.filter_num))

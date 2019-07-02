@@ -15,5 +15,5 @@ class Layer(metaclass=ABCMeta):
         pass
 
     @abstractmethod
-    def backward(self, grad_out):
+    def backward(self, grad_out, cache):
         pass

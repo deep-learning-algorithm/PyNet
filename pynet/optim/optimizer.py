@@ -16,7 +16,8 @@ class Optimizer(metaclass=ABCMeta):
 
         self.optim_configs = {}
         for p in params.keys():
-            d = {k: v for k, v in defaults.items()}
+            # d = {k: v for k, v in defaults.items()}
+            d = defaults.copy()
             self.optim_configs[p] = d
 
     @abstractmethod

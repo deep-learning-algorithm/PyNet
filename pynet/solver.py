@@ -3,7 +3,6 @@
 # @Time    : 19-6-29 下午8:33
 # @Author  : zj
 
-import pynet.optim as optim
 import numpy as np
 import time
 
@@ -22,8 +21,6 @@ class Solver(object):
         self.optimizer = optimizer
 
         self.lr_scheduler = kwargs.pop('lr_scheduler', None)
-        # self.update_rule = kwargs.pop('update_rule', 'sgd')
-        # self.optim_config = kwargs.pop('optim_config', {})
         self.batch_size = kwargs.pop('batch_size', 8)
         self.num_epochs = kwargs.pop('num_epochs', 10)
         self.reg = kwargs.pop('reg', 1e-3)
@@ -35,10 +32,6 @@ class Solver(object):
             extra = ', '.join('"%s"' % k for k in list(kwargs.keys()))
             raise ValueError('未识别参数: %s' % extra)
 
-        # if not hasattr(optim, self.update_rule):
-        #     raise ValueError('无效的更新规则： %s' % self.update_rule)
-        # self.update_rule = getattr(optim, self.update_rule)
-
         self._reset()
 
     def _reset(self):
@@ -49,11 +42,6 @@ class Solver(object):
         self.loss_history = []
         self.train_acc_history = []
         self.val_acc_history = []
-
-        # self.optim_configs = {}
-        # for p in self.model.params.keys():
-        #     d = {k: v for k, v in self.optim_config.items()}
-        #     self.optim_configs[p] = d
 
     def _step(self, X_batch, y_batch):
         scores = self.model.forward(X_batch)
@@ -71,13 +59,6 @@ class Solver(object):
                     grad[k] += self.reg * self.model.params[k]
 
         self.optimizer.step(grad)
-
-        # for p, w in self.model.params.items():
-        #     dw = grad[p]
-        #     config = self.optim_configs[p]
-        #     next_w, next_config = self.update_rule(w, dw, config)
-        #     self.model.params[p] = next_w
-        #     self.optim_configs[p] = next_config
 
         return loss
 

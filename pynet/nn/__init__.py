@@ -8,5 +8,5 @@ from .Conv2d import Conv2d
 from .MaxPool import MaxPool
 from .GAP import GAP
 
-from .Conv2d2 import Conv2d2
-from .MaxPool2 import MaxPool2
+from .Conv2d import Conv2d2
+from .MaxPool import MaxPool2

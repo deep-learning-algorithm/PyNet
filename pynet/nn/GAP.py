@@ -16,10 +16,6 @@ class GAP(Layer):
     全局平均池化层
     """
 
-    def __init__(self):
-        super(GAP, self).__init__()
-        self.input_shape = None
-
     def __call__(self, inputs):
         return self.forward(inputs)
 
@@ -29,12 +25,13 @@ class GAP(Layer):
         N, C, H, W = inputs.shape[:4]
 
         z = np.mean(inputs.reshape(N, C, -1), axis=2)
-        self.input_shape = inputs.shape
 
-        return z
+        cache = (inputs.shape)
+        return z, cache
 
-    def backward(self, grad_out):
-        N, C, H, W = self.input_shape[:4]
+    def backward(self, grad_out, cache):
+        input_shape = cache
+        N, C, H, W = input_shape[:4]
         dz = grad_out.reshape(N * C, -1)
         da = np.repeat(dz, H * W, axis=1)
 
@@ -45,9 +42,9 @@ if __name__ == '__main__':
     gap = GAP()
 
     inputs = np.arange(36).reshape(2, 2, 3, 3)
-    res = gap(inputs)
+    res, cache = gap(inputs)
     print(res)
 
     grad_out = np.arange(4).reshape(2, 2)
-    da = gap.backward(grad_out)
+    da = gap.backward(grad_out, cache)
     print(da)
