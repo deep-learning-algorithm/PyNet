@@ -4,9 +4,10 @@
 # @Author  : zj
 
 import numpy as np
+from .optimizer import Optimizer
 
 
-class SGD:
+class SGD(Optimizer):
 
     def __init__(self, params, lr=1e-3, momentum=0, nesterov=False):
         if isinstance(lr, float) and lr < 0.0:
@@ -16,15 +17,17 @@ class SGD:
         if nesterov is True and momentum < 0.0:
             raise ValueError("Invalid momentum value: {}".format(momentum))
 
-        self.params = params
+        # self.params = params
         self.use_momentum = momentum != 0
         self.nesterov = nesterov
         defaults = dict(lr=lr, momentum=momentum)
 
-        self.optim_configs = {}
-        for p in params.keys():
-            d = {k: v for k, v in defaults.items()}
-            self.optim_configs[p] = d
+        super(SGD, self).__init__(params, defaults)
+
+        # self.optim_configs = {}
+        # for p in params.keys():
+        #     d = {k: v for k, v in defaults.items()}
+        #     self.optim_configs[p] = d
 
     def step(self, grad):
         assert isinstance(grad, dict)
@@ -41,7 +44,7 @@ class SGD:
             v_prev = config.get('velocity', np.zeros_like(w))
 
             if self.nesterov:
-                v = config['momentum'] * v_prev - config['learning_rate'] * dw
+                v = config['momentum'] * v_prev - config['lr'] * dw
                 next_w = w + (1 + config['momentum']) * v - config['momentum'] * v_prev
             else:
                 v = config['momentum'] * v_prev - config['lr'] * dw

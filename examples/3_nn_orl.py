@@ -4,10 +4,11 @@
 # @Author  : zj
 
 import numpy as np
-from pynet.models import ThreeLayerNet
-from pynet import Solver
-from pynet.vision.data import orl
+import pynet
+import pynet.models as models
 import pynet.nn as nn
+import pynet.optim as optim
+from pynet.vision.data import orl
 import plt
 
 data_path = '/home/zj/data/att_faces_png'
@@ -25,11 +26,12 @@ if __name__ == '__main__':
         'y_val': y_test
     }
 
-    model = ThreeLayerNet(num_in=644, num_h1=2000, num_h2=800, num_out=40)
+    model = models.ThreeLayerNet(num_in=644, num_h1=2000, num_h2=800, num_out=40)
     criterion = nn.CrossEntropyLoss()
+    optimizer = optim.SGD(model.params, lr=2e-2)
 
-    solver = Solver(model, data, criterion, update_rule='sgd', batch_size=4, num_epochs=100,
-                    reg=1e-3, print_every=1, optim_config={'learning_rate': 2e-2})
+    solver = pynet.Solver(model, data, criterion, optimizer, batch_size=4, num_epochs=100,
+                          reg=1e-3, print_every=1)
     solver.train()
 
     plt.draw_loss(solver.loss_history)

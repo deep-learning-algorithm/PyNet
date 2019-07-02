@@ -5,10 +5,11 @@
 
 
 import numpy as np
-from pynet.models import ThreeLayerNet
-from pynet import Solver
-from pynet.vision.data import iris
+import pynet
+import pynet.optim as optim
+import pynet.models as models
 import pynet.nn as nn
+from pynet.vision.data import iris
 import plt
 
 data_path = '/home/zj/data/iris-species/Iris.csv'
@@ -27,11 +28,12 @@ if __name__ == '__main__':
         'y_val': y_test
     }
 
-    model = ThreeLayerNet(num_in=4, num_h1=40, num_h2=20, num_out=3)
+    model = models.ThreeLayerNet(num_in=4, num_h1=40, num_h2=20, num_out=3, dropout=0.5)
     criterion = nn.CrossEntropyLoss()
+    optimizer = optim.SGD(model.params, lr=1e-3, momentum=0.5, nesterov=True)
 
-    solver = Solver(model, data, criterion, update_rule='sgd', batch_size=120, num_epochs=10000,
-                    reg=1e-3, print_every=100, optim_config={'learning_rate': 1e-3})
+    solver = pynet.Solver(model, data, criterion, optimizer, batch_size=120, num_epochs=50000,
+                          reg=1e-3, print_every=500)
     solver.train()
 
     plt.draw_loss(solver.loss_history)

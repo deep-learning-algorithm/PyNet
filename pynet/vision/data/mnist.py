@@ -7,10 +7,6 @@ from .utils import *
 import os
 import numpy as np
 
-cate_list = list(range(10))
-
-dst_size = (32, 32)
-
 
 def load_mnist(mnist_path, dst_size=None, shuffle=True, is_flatten=False):
     """
@@ -24,6 +20,7 @@ def load_mnist(mnist_path, dst_size=None, shuffle=True, is_flatten=False):
     y_train = []
     y_test = []
     train_file_list = []
+    cate_list = list(range(10))
     for i in cate_list:
         data_dir = os.path.join(train_dir, str(i))
         file_list = os.listdir(data_dir)
@@ -43,7 +40,8 @@ def load_mnist(mnist_path, dst_size=None, shuffle=True, is_flatten=False):
                 if is_flatten:
                     x_test.append(img.reshape(-1))
                 else:
-                    x_test.append(np.transpose(img, (2, 0, 1)))
+                    h, w = img.shape[:2]
+                    x_test.append(img.reshape(1, h, w))
                 y_test.append(i)
 
     train_file_list = np.array(train_file_list)
@@ -60,7 +58,8 @@ def load_mnist(mnist_path, dst_size=None, shuffle=True, is_flatten=False):
             if is_flatten:
                 x_train.append(img.reshape(-1))
             else:
-                x_train.append(np.transpose(img, (2, 0, 1)))
+                h, w = img.shape[:2]
+                x_train.append(img.reshape(1, h, w))
             y_train.append(int(os.path.split(file_path)[0].split('/')[-1]))
 
     return np.array(x_train), np.array(x_test), np.array(y_train), np.array(y_test)

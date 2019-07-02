@@ -12,16 +12,18 @@ __all__ = ['Solver']
 
 class Solver(object):
 
-    def __init__(self, model, data, criterion, **kwargs):
+    def __init__(self, model, data, criterion, optimizer, **kwargs):
         self.model = model
         self.X_train = data['X_train']
         self.y_train = data['y_train']
         self.X_val = data['X_val']
         self.y_val = data['y_val']
         self.criterion = criterion
+        self.optimizer = optimizer
 
-        self.update_rule = kwargs.pop('update_rule', 'sgd')
-        self.optim_config = kwargs.pop('optim_config', {})
+        self.lr_scheduler = kwargs.pop('lr_scheduler', None)
+        # self.update_rule = kwargs.pop('update_rule', 'sgd')
+        # self.optim_config = kwargs.pop('optim_config', {})
         self.batch_size = kwargs.pop('batch_size', 8)
         self.num_epochs = kwargs.pop('num_epochs', 10)
         self.reg = kwargs.pop('reg', 1e-3)
@@ -33,9 +35,9 @@ class Solver(object):
             extra = ', '.join('"%s"' % k for k in list(kwargs.keys()))
             raise ValueError('未识别参数: %s' % extra)
 
-        if not hasattr(optim, self.update_rule):
-            raise ValueError('无效的更新规则： %s' % self.update_rule)
-        self.update_rule = getattr(optim, self.update_rule)
+        # if not hasattr(optim, self.update_rule):
+        #     raise ValueError('无效的更新规则： %s' % self.update_rule)
+        # self.update_rule = getattr(optim, self.update_rule)
 
         self._reset()
 
@@ -48,10 +50,10 @@ class Solver(object):
         self.train_acc_history = []
         self.val_acc_history = []
 
-        self.optim_configs = {}
-        for p in self.model.params.keys():
-            d = {k: v for k, v in self.optim_config.items()}
-            self.optim_configs[p] = d
+        # self.optim_configs = {}
+        # for p in self.model.params.keys():
+        #     d = {k: v for k, v in self.optim_config.items()}
+        #     self.optim_configs[p] = d
 
     def _step(self, X_batch, y_batch):
         scores = self.model.forward(X_batch)
@@ -68,12 +70,14 @@ class Solver(object):
                 if 'W' in k:
                     grad[k] += self.reg * self.model.params[k]
 
-        for p, w in self.model.params.items():
-            dw = grad[p]
-            config = self.optim_configs[p]
-            next_w, next_config = self.update_rule(w, dw, config)
-            self.model.params[p] = next_w
-            self.optim_configs[p] = next_config
+        self.optimizer.step(grad)
+
+        # for p, w in self.model.params.items():
+        #     dw = grad[p]
+        #     config = self.optim_configs[p]
+        #     next_w, next_config = self.update_rule(w, dw, config)
+        #     self.model.params[p] = next_w
+        #     self.optim_configs[p] = next_config
 
         return loss
 
@@ -121,6 +125,8 @@ class Solver(object):
 
                 total_loss += self._step(X_batch, y_batch)
             end = time.time()
+            if self.lr_scheduler is not None:
+                self.lr_scheduler.step()
 
             if self.current_epoch % self.print_every == 0:
                 avg_loss = total_loss / iterations_per_epoch
