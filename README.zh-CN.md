@@ -33,26 +33,37 @@
 ```
 .
 ├── examples                          # pynet使用示例
-│   ├── 2_nn_xor.py
+│   ├── 2_nn_mnist.py
 │   ├── 3_nn_cifar10.py
 │   ├── 3_nn_iris.py
+│   ├── 3_nn_mnist.py
 │   ├── 3_nn_orl.py
 │   ├── lenet5_mnist.py
-│   ├── nin_cifar10.py
-│   └── nin_cifar10_pytorch.py
-├── plt                               # 绘图相关（待调整）
-│   ├── anneal_plt.py
-│   ├── lenet5_plt.py
-│   └── plt.py
-├── pynet                             # PyNet库
+│   └── nin_cifar10.py
+├── imgs                              
+│   ├── logo2.png
+│   └── logo.png
+├── LICENSE
+├── plt                               # 绘制损失和精度图
+│   ├── draw_acc.py
+│   ├── draw_loss.py
+│   ├── __init__.py
+│   └── __pycache__
+├── pynet                             
 │   ├── __init__.py
 │   ├── models                        # 模型定义
 │   ├── nn                            # 层定义
-│   └── vision                        # 数据操作
-├── pytorch                           # PyTorch使用示例
-│   ├── examples                      
-│   ├── models                        # 模型定义
-│   └── vision                        # 数据操作
+│   ├── optim                         # 优化器
+│   ├── __pycache__
+│   ├── solver.py                     # 求解器
+│   └── vision                        # 数据相关
+├── pytorch
+│   ├── examples
+│   ├── __init__.py
+│   ├── models
+│   └── vision
+├── README.md
+└── README.zh-CN.md
 ```
 
 ## 版本化
