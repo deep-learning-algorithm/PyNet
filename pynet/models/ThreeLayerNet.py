@@ -43,8 +43,8 @@ class ThreeLayerNet(Net):
         return self.forward(inputs)
 
     def forward(self, inputs):
-        # inputs.shape = [N, D_in]
-        assert len(inputs.shape) == 2
+        inputs = inputs.reshape(inputs.shape[0], -1)
+
         self.z1, self.z1_cache = self.fc1(inputs, self.params['W1'], self.params['b1'])
         a1 = self.relu(self.z1)
         if self.use_dropout and self.dropout_param['mode'] == 'train':
