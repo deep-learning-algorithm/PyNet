@@ -7,58 +7,77 @@ import numpy as np
 import os
 from .utils import *
 
-data_path = '/home/lab305/Documents/data/decompress_cifar_10'
+train_list = ['data_batch_1', 'data_batch_2', 'data_batch_3', 'data_batch_4', 'data_batch_5']
 
-cate_list = list(range(10))
-
-dst_size = (32, 32)
+test_batch = 'test_batch'
 
 
-def load_cifar10(cifar10_path, shuffle=True, is_flatten=False):
+def load_CIFAR_batch(file_path):
+    """ load single batch of cifar """
+    data_dict = load_pickle(file_path)
+    data = data_dict['data']
+    labels = data_dict['labels']
+
+    data = data.reshape(10000, 3, 32, 32).astype("float")
+    labels = np.array(labels)
+    return data, labels
+
+
+def load_CIFAR10(file_dir):
+    """ load all of cifar """
+    xs = []
+    ys = []
+    for filename in train_list:
+        file_path = os.path.join(file_dir, filename)
+        data, labels = load_CIFAR_batch(file_path)
+        xs.append(data)
+        ys.append(labels)
+    x_train = np.concatenate(xs)
+    y_train = np.concatenate(ys)
+
+    x_test, y_test = load_CIFAR_batch(os.path.join(file_dir, test_batch))
+
+    return x_train, y_train, x_test, y_test
+
+
+def get_CIFAR10_data(cifar_dir, num_validation=2000, normalize=True):
     """
-    加载cifar10
+    加载CIFAR10数据，从训练集中分类验证集数据
+    :param cifar_dir: cifar解压文件路径
+    :param num_validation: 验证集数量
+    :param normalize: 是否初始化为零均值，1方差
+    :return: dict，保存训练集、验证集以及测试集的数据和标签
     """
+    x_train, y_train, x_test, y_test = load_CIFAR10(cifar_dir)
 
-    train_dir = os.path.join(cifar10_path, 'train')
-    test_dir = os.path.join(cifar10_path, 'test')
+    num_train = x_train.shape[0] - num_validation
 
-    x_train = []
-    x_test = []
-    y_train = []
-    y_test = []
-    train_file_list = []
-    for i in cate_list:
-        data_dir = os.path.join(train_dir, str(i))
-        file_list = os.listdir(data_dir)
-        for filename in file_list:
-            file_path = os.path.join(data_dir, filename)
-            train_file_list.append(file_path)
+    # 打乱数据集
+    np.random.shuffle(x_train)
 
-        # 读取测试集图像
-        data_dir = os.path.join(test_dir, str(i))
-        file_list = os.listdir(data_dir)
-        for filename in file_list:
-            file_path = os.path.join(data_dir, filename)
-            img = read_image(file_path)
-            if img is not None:
-                y_test.append(i)
-                if is_flatten:
-                    x_test.append(img.reshape(-1))
-                else:
-                    x_test.append(np.transpose(img, (2, 0, 1)))
+    mask = list(range(num_train, num_train + num_validation))
+    x_val = x_train[mask]
+    y_val = y_train[mask]
+    mask = list(range(num_train))
+    x_train = x_train[mask]
+    y_train = y_train[mask]
 
-    train_file_list = np.array(train_file_list)
-    if shuffle:
-        np.random.shuffle(train_file_list)
+    # Normalize the data: subtract the mean image and divide the variance
+    if normalize:
+        # eps = 1e-8
+        # train_mean = np.mean(x_train, axis=0)
+        # train_var = np.var(x_train, axis=0)
+        # x_train = (x_train - train_mean) / np.sqrt(train_var + eps)
+        # x_val = (x_val - train_mean) / np.sqrt(train_var + eps)
+        # x_test = (x_test - train_mean) / np.sqrt(train_var + eps)
 
-    # 读取训练集图像
-    for file_path in train_file_list:
-        img = read_image(file_path)
-        if img is not None:
-            y_train.append(int(os.path.split(file_path)[0].split('/')[-1]))
-            if is_flatten:
-                x_train.append(img.reshape(-1))
-            else:
-                x_train.append(np.transpose(img, (2, 0, 1)))
+        x_train = x_train / 255 - 0.5
+        x_val = x_val / 255 - 0.5
+        x_test = x_test / 255 - 0.5
 
-    return np.array(x_train), np.array(x_test), np.array(y_train), np.array(y_test)
+    # Package data into a dictionary
+    return {
+        'x_train': x_train, 'y_train': y_train,
+        'x_val': x_val, 'y_val': y_val,
+        'x_test': x_test, 'y_test': y_test,
+    }
