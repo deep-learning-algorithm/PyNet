@@ -7,17 +7,17 @@ from .utils import *
 from .pool2row import *
 from .Layer import *
 
-__all__ = ['MaxPool2']
+__all__ = ['MaxPool']
 
 
-class MaxPool2:
+class MaxPool:
     """
     max pool layer
     池化层，执行max运算
     """
 
     def __init__(self, filter_h, filter_w, filter_num, stride=2):
-        super(MaxPool2, self).__init__()
+        super(MaxPool, self).__init__()
         self.filter_h = filter_h
         self.filter_w = filter_w
         self.filter_num = filter_num

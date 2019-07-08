@@ -43,27 +43,12 @@ class FC:
 
     def backward(self, grad_out, cache):
         inputs, w, b = cache
-        grad_W = inputs.T.dot(grad_out)
+        grad_w = inputs.T.dot(grad_out)
         grad_b = np.sum(grad_out, axis=0, keepdims=True) / grad_out.shape[0]
 
         grad_in = grad_out.dot(w.T)
-        return grad_W, grad_b, grad_in
+        return grad_w, grad_b, grad_in
 
     def get_params(self):
         return self.weight_scale * np.random.normal(loc=0, scale=1.0, size=(self.num_in, self.num_out)), \
-               self.weight_scale * np.random.normal(loc=0, scale=1.0, size=(1, self.num_out))
-
-
-def affine_forward(inputs, w, b):
-    res = inputs.dot(w) + b
-    cache = (inputs, w, b)
-    return res, cache
-
-
-def affine_backward(grad_out, cache):
-    inputs, w, b = cache
-
-    grad_w = inputs.T.dot(grad_out)
-    grad_b = np.sum(grad_out, axis=0, keepdims=True) / grad_out.shape[0]
-    grad_in = grad_out.dot(w.T)
-    return grad_w, grad_b, grad_in
+               np.zeros((1, self.num_out))

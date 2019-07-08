@@ -9,10 +9,10 @@ from .im2row import *
 from .pool2row import *
 from .Layer import *
 
-__all__ = ['Conv2d2']
+__all__ = ['Conv2d']
 
 
-class Conv2d2:
+class Conv2d:
     """
     convolutional layer
     卷积层
@@ -28,7 +28,7 @@ class Conv2d2:
         :param padding: 零填充
         :param weight_scale:
         """
-        super(Conv2d2, self).__init__()
+        super(Conv2d, self).__init__()
         self.in_c = in_c
         self.filter_h = filter_h
         self.filter_w = filter_w
@@ -70,4 +70,4 @@ class Conv2d2:
     def get_params(self):
         return self.weight_scale * np.random.normal(loc=0, scale=1.0, size=(
             self.filter_h * self.filter_w * self.in_c, self.filter_num)), \
-               self.weight_scale * np.random.normal(loc=0, scale=1.0, size=(1, self.filter_num))
+               np.zeros((1, self.filter_num))
