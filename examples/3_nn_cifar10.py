@@ -11,27 +11,17 @@ from pynet.vision.data import cifar
 import pynet.nn as nn
 import plt
 
-data_path = '/home/zj/data/decompress_cifar_10'
-# data_path = '/home/lab305/Documents/zj/data/decompress_cifar_10'
+data_path = '/home/lab305/Documents/zj/data/cifar_10/cifar-10-batches-py'
 
 if __name__ == '__main__':
-    x_train, x_test, y_train, y_test = cifar.load_cifar10(data_path, shuffle=True, is_flatten=True)
+    data_dict = cifar.get_CIFAR10_data(data_path)
 
-    x_train = x_train / 255 - 0.5
-    x_test = x_test / 255 - 0.5
-
-    data = {
-        'X_train': x_train,
-        'y_train': y_train,
-        'X_val': x_test,
-        'y_val': y_test
-    }
-
-    model = models.ThreeLayerNet(num_in=3072, num_h1=2000, num_h2=800, num_out=10, dropout=0.5)
+    # model = models.ThreeLayerNet(num_in=3072, num_h1=2000, num_h2=800, num_out=10, dropout=0.5)
+    model = models.FCNet([2000, 800], input_dim=3072, num_classes=10, dropout=0.5, normalization='batchnorm')
     criterion = nn.CrossEntropyLoss()
     optimizer = optim.SGD(model.params, lr=1e-3)
 
-    solver = pynet.Solver(model, data, criterion, optimizer, batch_size=256, num_epochs=50,
+    solver = pynet.Solver(model, data_dict, criterion, optimizer, batch_size=256, num_epochs=250,
                           reg=1e-3, print_every=1)
     solver.train()
 
