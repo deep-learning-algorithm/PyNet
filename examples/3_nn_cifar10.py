@@ -16,8 +16,7 @@ data_path = '/home/lab305/Documents/zj/data/cifar_10/cifar-10-batches-py'
 if __name__ == '__main__':
     data_dict = cifar.get_CIFAR10_data(data_path)
 
-    # model = models.ThreeLayerNet(num_in=3072, num_h1=2000, num_h2=800, num_out=10, dropout=0.5)
-    model = models.FCNet([2000, 800], input_dim=3072, num_classes=10, dropout=0.5, normalization='batchnorm')
+    model = models.FCNet([2000, 800], input_dim=3072, num_classes=10, normalization='batchnorm')
     criterion = nn.CrossEntropyLoss()
     optimizer = optim.SGD(model.params, lr=1e-3)
 

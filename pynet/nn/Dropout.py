@@ -8,13 +8,37 @@ import numpy as np
 
 class Dropout(object):
 
-    def __call__(self, shape, p):
-        return self.forward(shape, p)
+    def __call__(self, inputs, dropout_param):
+        return self.forward(inputs, dropout_param)
 
-    def forward(self, shape, p):
-        assert len(shape) == 2
-        res = (np.random.ranf(shape) < p) / p
+    def forward(self, inputs, dropout_param):
+        p, mode = dropout_param['p'], dropout_param['mode']
+        if 'seed' in dropout_param:
+            np.random.seed(dropout_param['seed'])
 
-        if np.sum(res) == 0:
-            return 1.0 / p
-        return res
+        mask = None
+        out = None
+
+        if mode == 'train':
+            mask = (np.random.ranf(inputs.shape) < p) / p
+            out = inputs * mask
+        elif mode == 'test':
+            out = inputs
+
+        cache = (dropout_param, mask)
+        #     print(mask.shape)
+        out = out.astype(inputs.dtype, copy=False)
+
+        return out, cache
+
+    def backward(self, dout, cache):
+        dropout_param, mask = cache
+        mode = dropout_param['mode']
+
+        dx = None
+        if mode == 'train':
+            dx = dout * mask
+        elif mode == 'test':
+            dx = dout
+
+        return dx

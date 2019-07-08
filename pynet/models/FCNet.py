@@ -24,7 +24,7 @@ class FCNet(Net):
     """
 
     def __init__(self, hidden_dims, input_dim=3 * 32 * 32, num_classes=10, normalization=None,
-                 dropout=1.0, weight_scale=1e-2, dtype=np.double):
+                 dropout=1.0, seed=None, weight_scale=1e-2, dtype=np.double):
         super(FCNet, self).__init__()
         self.hidden_dims = hidden_dims
         self.input_dim = input_dim
@@ -44,21 +44,23 @@ class FCNet(Net):
         self.use_dropout = dropout != 1.0
         self.dropout_param = {}
         if self.use_dropout:
+            self.dropout = nn.Dropout()
+
             self.dropout_param['mode'] = 'train'
             self.dropout_param['p'] = dropout
-            self.dropout = nn.Dropout()
-            self.U1 = None
-            self.U2 = None
+            if seed is not None:
+                self.dropout_param['seed'] = seed
 
-        self.bn = nn.BN()
         self.bn_params = []
         if self.normalization == 'batchnorm':
+            self.bn = nn.BN()
+
             for i in range(len(hidden_dims)):
                 self.params['gamma%d' % (i + 1)] = np.ones(hidden_dims[i])
                 self.params['beta%d' % (i + 1)] = np.zeros(hidden_dims[i])
                 self.bn_params.append({'mode': 'train'})
 
-        # 转换参数为指定数据类型
+        # 转换可学习参数为指定数据类型
         for k, v in self.params.items():
             self.params[k] = v.astype(dtype)
 
@@ -79,15 +81,20 @@ class FCNet(Net):
             self.caches['z%d' % (i + 1)], self.caches['z%d_cache' % (i + 1)] = self.fcs[i].forward(x, w, b)
 
             if i != (self.num_layers - 1):
+                z = self.caches['z%d' % (i + 1)]
+
                 if self.normalization == 'batchnorm':
                     gamma = self.params['gamma%d' % (i + 1)]
                     beta = self.params['beta%d' % (i + 1)]
                     bn_param = self.bn_params[i]
 
-                    y, self.caches['y%d_cache' % (i + 1)] = self.bn(self.caches['z%d' % (i + 1)], gamma, beta, bn_param)
-                    x = self.relu(y)
-                else:
-                    x = self.relu(self.caches['z%d' % (i + 1)])
+                    y, self.caches['y%d_cache' % (i + 1)] = self.bn(z, gamma, beta, bn_param)
+                    z = y
+
+                x = self.relu(z)
+
+                if self.use_dropout:
+                    x, self.caches['dropout%d_cache' % (i + 1)] = self.dropout(x, self.dropout_param)
 
         return self.caches['z%d' % self.num_layers]
 
@@ -102,12 +109,16 @@ class FCNet(Net):
             if i == (self.num_layers - 1):
                 dz = grad_out
             else:
+                if self.use_dropout:
+                    dropout_cache = self.caches['dropout%d_cache' % (i + 1)]
+                    da = self.dropout.backward(da, dropout_cache)
+
+                dz = self.relu.backward(da, z)
+
                 if self.normalization == 'batchnorm':
                     y_cache = self.caches['y%d_cache' % (i + 1)]
-                    dy = self.relu.backward(da, z)
+                    dy = dz
                     dz, grad['gamma%d' % (i + 1)], grad['beta%d' % (i + 1)] = self.bn.backward(dy, y_cache)
-                else:
-                    dz = self.relu.backward(da, z)
 
             grad['W%d' % (i + 1)], grad['b%d' % (i + 1)], da = self.fcs[i].backward(dz, z_cache)
 
@@ -146,7 +157,11 @@ class FCNet(Net):
             caches['z%d' % i] = None
             caches['z%d_cache' % i] = None
             if i != (self.num_layers - 1):
-                caches['y%d_cache' % (i + 1)] = None
+                if self.normalization == 'batchnorm':
+                    caches['y%d_cache' % (i + 1)] = None
+                if self.use_dropout:
+                    caches['dropout%d_cache' % (i + 1)] = None
+
         return caches
 
     def train(self):
