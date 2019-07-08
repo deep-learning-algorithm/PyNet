@@ -5,6 +5,7 @@
 
 import numpy as np
 import os
+from sklearn.model_selection import train_test_split
 from .utils import *
 
 train_list = ['data_batch_1', 'data_batch_2', 'data_batch_3', 'data_batch_4', 'data_batch_5']
@@ -40,44 +41,27 @@ def load_CIFAR10(file_dir):
     return x_train, y_train, x_test, y_test
 
 
-def get_CIFAR10_data(cifar_dir, num_validation=2000, normalize=True):
+def get_CIFAR10_data(cifar_dir, val_size=0.05, normalize=True):
     """
     加载CIFAR10数据，从训练集中分类验证集数据
     :param cifar_dir: cifar解压文件路径
-    :param num_validation: 验证集数量
+    :param val_size: 浮点数，表示验证集占整个训练集的百分比
     :param normalize: 是否初始化为零均值，1方差
     :return: dict，保存训练集、验证集以及测试集的数据和标签
     """
     x_train, y_train, x_test, y_test = load_CIFAR10(cifar_dir)
 
-    num_train = x_train.shape[0] - num_validation
-
-    # 打乱数据集
-    np.random.shuffle(x_train)
-
-    mask = list(range(num_train, num_train + num_validation))
-    x_val = x_train[mask]
-    y_val = y_train[mask]
-    mask = list(range(num_train))
-    x_train = x_train[mask]
-    y_train = y_train[mask]
+    x_train, x_val, y_train, y_val = train_test_split(x_train, y_train, test_size=val_size, shuffle=False)
 
     # Normalize the data: subtract the mean image and divide the variance
     if normalize:
-        # eps = 1e-8
-        # train_mean = np.mean(x_train, axis=0)
-        # train_var = np.var(x_train, axis=0)
-        # x_train = (x_train - train_mean) / np.sqrt(train_var + eps)
-        # x_val = (x_val - train_mean) / np.sqrt(train_var + eps)
-        # x_test = (x_test - train_mean) / np.sqrt(train_var + eps)
-
         x_train = x_train / 255 - 0.5
         x_val = x_val / 255 - 0.5
         x_test = x_test / 255 - 0.5
 
     # Package data into a dictionary
     return {
-        'x_train': x_train, 'y_train': y_train,
-        'x_val': x_val, 'y_val': y_val,
-        'x_test': x_test, 'y_test': y_test,
+        'X_train': x_train, 'y_train': y_train,
+        'X_val': x_val, 'y_val': y_val,
+        'X_test': x_test, 'y_test': y_test,
     }
