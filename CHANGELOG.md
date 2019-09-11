@@ -1,4 +1,8 @@
-# [](https://github.com/zjZSTU/PyNet/compare/v0.2.1...v) (2019-09-11)
+# [](https://github.com/zjZSTU/PyNet/compare/v0.3.0...v) (2019-09-11)
+
+
+
+# [0.3.0](https://github.com/zjZSTU/PyNet/compare/v0.2.1...v0.3.0) (2019-09-11)
 
 
 ### Features
