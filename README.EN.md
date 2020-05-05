@@ -2,7 +2,7 @@
 
 ![](./imgs/logo.png)
 
-[![standard-readme compliant](https://img.shields.io/badge/standard--readme-OK-green.svg?style=flat-square)](https://github.com/RichardLitt/standard-readme) [![Conventional Commits](https://img.shields.io/badge/Conventional%20Commits-1.0.0-yellow.svg)](https://conventionalcommits.org) [![Commitizen friendly](https://img.shields.io/badge/commitizen-friendly-brightgreen.svg)](http://commitizen.github.io/cz-cli/)
+[![Documentation Status](https://readthedocs.org/projects/zj-pynet/badge/?version=latest)](https://zj-pynet.readthedocs.io/zh_CN/latest/?badge=latest) [![standard-readme compliant](https://img.shields.io/badge/standard--readme-OK-green.svg?style=flat-square)](https://github.com/RichardLitt/standard-readme) [![Conventional Commits](https://img.shields.io/badge/Conventional%20Commits-1.0.0-yellow.svg)](https://conventionalcommits.org) [![Commitizen friendly](https://img.shields.io/badge/commitizen-friendly-brightgreen.svg)](http://commitizen.github.io/cz-cli/)
 
 [中文版本（Chinese version）](./README.md)
 
@@ -12,16 +12,18 @@ Implementation of deep learning based on numpy, modular design guarantees easy i
 
 ## Table of Contents
 
-- [Background](#background)
-- [Badge](#badge)
-- [Install](#install)
-- [Usage](#usage)
-- [CHANGELOG](#CHANGELOG)
-- [TODO](#todo)
-- [Maintainers](#maintainers)
-- [Thanks](#Thanks)
-- [Contributing](#contributing)
-- [License](#license)
+- [PyNet](#pynet)
+  - [Table of Contents](#table-of-contents)
+  - [Background](#background)
+  - [Badge](#badge)
+  - [Install](#install)
+  - [Usage](#usage)
+  - [CHANGELOG](#changelog)
+  - [TODO](#todo)
+  - [Maintainers](#maintainers)
+  - [Thanks](#thanks)
+  - [Contributing](#contributing)
+  - [License](#license)
 
 ## Background
 
