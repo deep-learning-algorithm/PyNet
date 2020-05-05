@@ -5,11 +5,15 @@
 
 [![Documentation Status](https://readthedocs.org/projects/zj-pynet/badge/?version=latest)](https://zj-pynet.readthedocs.io/zh_CN/latest/?badge=latest) [![standard-readme compliant](https://img.shields.io/badge/standard--readme-OK-green.svg?style=flat-square)](https://github.com/RichardLitt/standard-readme) [![Conventional Commits](https://img.shields.io/badge/Conventional%20Commits-1.0.0-yellow.svg)](https://conventionalcommits.org) [![Commitizen friendly](https://img.shields.io/badge/commitizen-friendly-brightgreen.svg)](http://commitizen.github.io/cz-cli/)
 
-[英文版本（English version）](./README.EN.md)
-
 > 基于Numpy的深度学习库
 
 基于`Numpy`的深度学习实现，模块化设计保证模型的轻松实现，适用于深度学习初级研究人员的入门
+
+[使用示例](https://zj-pynet.readthedocs.io/zh_CN/latest/%E7%A4%BA%E4%BE%8B/)
+
+![](./docs/imgs/loss.png)
+
+![](./docs/imgs/acc.png)
 
 ## 内容列表
 
@@ -42,36 +46,28 @@ Markdown格式代码如下：
 
 ## 安装
 
-`PyNet`需要以下必备条件
-
-* `python3.x`
-* `numpy`
-* `opencv3.x`
+```
+# 文档工具依赖
+$ pip install -r requiremens.txt
+# PyNet库依赖
+$ cd pynet
+$ pip install -r requirements.txt
+```
 
 ## 用法
 
-参考[example](https://github.com/zjZSTU/PyNet/tree/master/examples)文件夹下的示例代码
+有两种文档使用方式
 
-完整版本参考[releases](https://github.com/zjZSTU/PyNet/releases)
+1. 在线浏览文档：[PyNet](https://zj-pynet.readthedocs.io/zh_CN/latest/)
 
-已实现网络模型（位于[pynet/models](https://github.com/zjZSTU/PyNet/tree/master/pynet/models)文件夹）：
+2. 本地浏览文档，实现如下：
 
-* `2`层神经网络
-* `3`层神经网络
-* `LeNet-5`
-* `AlexNet`
-* `NIN`
-
-已实现网络层（位于[pynet/nn](https://github.com/zjZSTU/PyNet/tree/master/pynet/nn)文件夹）：
-
-* 卷积层
-* 全连接层
-* 最大池化层
-* `ReLU`
-* 随机失活
-* `Softmax`
-* 交叉熵损失
-* 全局平均池化层
+    ```
+    $ git clone https://zj-pynet.readthedocs.io/zh_CN/latest/
+    $ cd PyNet
+    $ mkdocs serve
+    ```
+   启动本地服务器后即可登录浏览器`localhost:8000`
 
 ## 版本更新日志
 
