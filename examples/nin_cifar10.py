@@ -78,7 +78,8 @@ def nin_train():
 
     draw = vision.Draw()
     draw(loss_list, xlabel='迭代/20次')
-    draw.multi_plot((train_list, test_list), ('训练集', '测试集'), title='精度图', xlabel='迭代/20次', ylabel='精度值')
+    draw.multi_plot((train_list, test_list), ('训练集', '测试集'),
+                    title='精度图', xlabel='迭代/20次', ylabel='精度值', save_path='acc.png')
 
 
 if __name__ == '__main__':

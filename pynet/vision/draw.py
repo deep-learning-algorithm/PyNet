@@ -12,15 +12,16 @@ class Draw(object):
     def __call__(self, values, title='损失图', xlabel='迭代/次', ylabel='损失值'):
         self.forward(values, title='损失图', xlabel='迭代/次', ylabel='损失值')
 
-    def forward(self, values, title='损失图', xlabel='迭代/次', ylabel='损失值'):
+    def forward(self, values, title='损失图', xlabel='迭代/次', ylabel='损失值', save_path='./loss.png'):
         assert isinstance(values, list)
         plt.title(title)
         plt.ylabel(ylabel)
         plt.xlabel(xlabel)
         plt.plot(values)
+        plt.savefig(save_path)
         plt.show()
 
-    def multi_plot(self, values_list, labels_list, title='损失图', xlabel='迭代/次', ylabel='损失值'):
+    def multi_plot(self, values_list, labels_list, title='损失图', xlabel='迭代/次', ylabel='损失值', save_path='./loss.png'):
         assert isinstance(values_list, tuple)
         assert isinstance(labels_list, tuple)
         assert len(values_list) == len(labels_list)
@@ -31,4 +32,5 @@ class Draw(object):
         for i in range(len(values_list)):
             plt.plot(values_list[i], label=labels_list[i])
         plt.legend()
+        plt.savefig(save_path)
         plt.show()

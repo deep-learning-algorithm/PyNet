@@ -35,5 +35,5 @@ if __name__ == '__main__':
     plt = Draw()
     plt(solver.loss_history)
     plt.multi_plot((solver.train_acc_history, solver.val_acc_history), ('train', 'val'),
-                   title='准确率', xlabel='迭代/次', ylabel='准确率')
+                   title='准确率', xlabel='迭代/次', ylabel='准确率', save_path='acc.png')
     print('best_train_acc: %f; best_val_acc: %f' % (solver.best_train_acc, solver.best_val_acc))
