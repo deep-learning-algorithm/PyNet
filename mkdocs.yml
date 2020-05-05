@@ -33,3 +33,4 @@ nav:
     - 整体架构: overall-structure.md
     - 网络层: 网络层.md
     - 网络模型: 网络模型.md
+    - 求解器: 求解器.md
