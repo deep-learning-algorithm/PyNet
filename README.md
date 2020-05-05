@@ -88,12 +88,6 @@ Markdown格式代码如下：
 
 ## 致谢
 
-感谢以下人员的参与
-
-[![](https://avatars3.githubusercontent.com/u/13742735?s=460&v=4)](https://github.com/zjZSTU)
-
-参考以下库
-
 * [cs231n](http://cs231n.github.io/)
 * [PyTorch](https://pytorch.org/)
 
