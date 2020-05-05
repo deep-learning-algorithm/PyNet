@@ -11,7 +11,7 @@ import pynet.optim as optim
 from pynet.vision.data import orl
 from pynet.vision import Draw
 
-data_path = '/home/zj/data/att_faces_png'
+data_path = '~/data/att_faces_png'
 
 if __name__ == '__main__':
     x_train, x_test, y_train, y_test = orl.load_orl(data_path, shuffle=True)

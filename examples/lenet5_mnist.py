@@ -10,8 +10,7 @@ import pynet.nn as nn
 from pynet.vision.data import mnist
 from pynet.vision import Draw
 
-# data_path = '/home/zj/data/decompress_mnist'
-data_path = '/home/lab305/Documents/zj/data/mnist'
+data_path = '~/data/decompress_mnist'
 
 if __name__ == '__main__':
     x_train, x_test, y_train, y_test = mnist.load_mnist(data_path, dst_size=(32, 32), shuffle=True)

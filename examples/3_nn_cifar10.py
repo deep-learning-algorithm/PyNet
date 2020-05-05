@@ -11,7 +11,7 @@ from pynet.vision.data import cifar
 import pynet.nn as nn
 from pynet.vision import Draw
 
-data_path = '/home/lab305/Documents/zj/data/cifar_10/cifar-10-batches-py'
+data_path = '~/data/cifar_10/cifar-10-batches-py'
 
 if __name__ == '__main__':
     data_dict = cifar.get_CIFAR10_data(data_path)

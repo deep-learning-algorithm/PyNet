@@ -12,7 +12,7 @@ import pynet.nn as nn
 from pynet.vision.data import iris
 from pynet.vision import Draw
 
-data_path = '/home/zj/data/iris-species/Iris.csv'
+data_path = '~/data/iris-species/Iris.csv'
 
 if __name__ == '__main__':
     x_train, x_test, y_train, y_test = iris.load_iris(data_path, shuffle=True, tsize=0.8)

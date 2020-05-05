@@ -9,7 +9,7 @@ from pynet.vision.data import cifar
 import numpy as np
 import time
 
-data_path = '/home/lab305/Documents/data/decompress_cifar_10'
+data_path = '~/data/decompress_cifar_10'
 
 epochs = 100
 batch_size = 128
