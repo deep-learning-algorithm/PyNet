@@ -30,3 +30,4 @@ extra_javascript:
 # 导航
 nav:
     - Home: index.md
+    - 整体架构: overall-structure.md
