@@ -10,7 +10,7 @@ import pynet.optim as optim
 import pynet.models as models
 import pynet.nn as nn
 from pynet.vision.data import iris
-import plt
+from pynet.vision import Draw
 
 data_path = '/home/zj/data/iris-species/Iris.csv'
 
@@ -36,6 +36,8 @@ if __name__ == '__main__':
                           reg=1e-3, print_every=500)
     solver.train()
 
-    plt.draw_loss(solver.loss_history)
-    plt.draw_acc((solver.train_acc_history, solver.val_acc_history), ('train', 'val'))
+    plt = Draw()
+    plt(solver.loss_history)
+    plt.multi_plot((solver.train_acc_history, solver.val_acc_history), ('train', 'val'),
+                   title='准确率', xlabel='迭代/次', ylabel='准确率')
     print('best_train_acc: %f; best_val_acc: %f' % (solver.best_train_acc, solver.best_val_acc))
