@@ -21,7 +21,7 @@ matplotlib == 3.1.2
 # vision/data/mnist.py: 8
 # vision/data/orl.py: 7
 # vision/data/xor.py: 7
-numpy == 1.17.2
+numpy == 1.22.0
 
 # vision/data/iris.py: 6
 # vision/data/orl.py: 9
