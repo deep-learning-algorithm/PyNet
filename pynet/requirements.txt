@@ -30,4 +30,4 @@ pandas == 0.25.3
 # vision/data/cifar.py: 8
 # vision/data/iris.py: 8,9
 # vision/data/orl.py: 10
-scikit_learn == 0.21.3
+scikit_learn == 1.5.0
